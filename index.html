@@ -5,9 +5,33 @@
 <title>NINE HUB | EXTRACTOR SCRIPT</title>
 <style>
 :root{--c:#00d4ff;--bg:#010612;--panel:rgba(2,12,30,.85)}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg)}
-body{font-family:sans-serif;color:#e0f4ff;overflow-x:hidden;background:radial-gradient(ellipse at 50% 0%,#0044aa 0%,transparent 50%),var(--bg);padding:15px 10px;display:flex;flex-direction:column;align-items:center}
-.banner-section{width:100%;max-width:500px;border-radius:16px 16px 0 0;overflow:hidden;box-shadow:0 -5px 25px #00d4ff33;z-index:1}.banner-section img{width:100%;display:block}
-.cyber-panel{width:100%;max-width:500px;background:var(--panel);border:2px solid #00d4ff80;border-radius:16px;padding:20px;z-index:2;margin-top:-15px;backdrop-filter:blur(10px);box-shadow:0 10px 30px #0008,inset 0 0 15px #00d4ff26}
+body{font-family:sans-serif;color:#e0f4ff;overflow-x:hidden;background:radial-gradient(ellipse at 50% 0%,#0044aa 0%,transparent 50%),var(--bg);padding:0 10px 20px;display:flex;flex-direction:column;align-items:center}
+
+/* ------------------------------------- */
+/* 🌟 ส่วน Header โฉมใหม่ (แทนรูปภาพ) */
+/* ------------------------------------- */
+.hero-section{width:100%;max-width:500px;padding:20px 0 30px;display:flex;flex-direction:column;align-items:center;gap:20px}
+.top-nav{width:100%;display:flex;justify-content:space-between;align-items:center;background:#021026cc;border:1px solid #0044aacc;border-radius:40px;padding:8px 12px;box-shadow:0 0 15px #0005}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:35px;height:35px;background:var(--c);color:#000;border-radius:50%;display:flex;justify-content:center;align-items:center;font-weight:900;font-size:14px;box-shadow:0 0 10px var(--c)}
+.nav-title{display:flex;flex-direction:column}
+.nav-title strong{font-size:13px;color:#fff;line-height:1}
+.nav-title span{font-size:10px;color:#00d4ffb3}
+.nav-actions{display:flex;gap:8px}
+.btn-nav{background:#00286699;border:1px solid #0055ff80;color:#fff;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:bold;text-decoration:none;display:flex;align-items:center;cursor:pointer;transition:.2s}
+.btn-nav:hover{background:#0044aa;border-color:var(--c)}
+.btn-nav.discord{background:linear-gradient(90deg,#5865F2,#4752C4);border:none}
+
+.hero-center{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:10px}
+.big-circle-logo{width:80px;height:80px;border:2px solid var(--c);border-radius:50%;display:flex;justify-content:center;align-items:center;font-size:20px;font-weight:900;color:var(--c);box-shadow:0 0 20px #00d4ff33, inset 0 0 15px #00d4ff33;margin-bottom:15px;background:#00113380}
+.status-badge{background:#001833;border:1px solid #0088ff66;padding:5px 15px;border-radius:30px;font-size:12px;color:#a2c9ff;display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.status-dot{width:8px;height:8px;background:#00ff88;border-radius:50%;box-shadow:0 0 8px #00ff88}
+.hero-center h1{margin:0;font-size:24px;color:#fff;line-height:1.2;text-shadow:0 0 10px #000}
+.hero-center h1 .highlight{color:var(--c);font-size:28px;text-shadow:0 0 15px var(--c)}
+.hero-center p{font-size:13px;color:#8ab4f8;max-width:90%;margin:15px 0 20px;line-height:1.5}
+/* ------------------------------------- */
+
+.cyber-panel{width:100%;max-width:500px;background:var(--panel);border:2px solid #00d4ff80;border-radius:16px;padding:20px;z-index:2;backdrop-filter:blur(10px);box-shadow:0 10px 30px #0008,inset 0 0 15px #00d4ff26}
 .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .title-group{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:900;color:#fff;text-shadow:0 0 10px var(--c)}
 button{font:inherit;cursor:pointer;outline:none;border:none;transition:.15s}button:active{transform:scale(.92)}
@@ -24,7 +48,7 @@ button{font:inherit;cursor:pointer;outline:none;border:none;transition:.15s}butt
 .btn-action.danger{background:linear-gradient(180deg,#8c0050cc,#3c0028cc);border-color:#ff0096cc}
 .toast{position:fixed;z-index:999;left:50%;bottom:25px;transform:translate(-50%,20px);background:#02142bf2;border:1px solid var(--c);border-radius:30px;padding:10px 25px;color:#fff;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}
 
-/* ปุ่มหลังบ้านลอยตัว มุมขวาล่าง */
+/* ปุ่มหลังบ้านลอยตัว */
 .admin-float-btn{position:fixed;bottom:20px;right:20px;background:#003c8c;border:2px solid var(--c);color:#fff;padding:10px 18px;border-radius:30px;font-weight:bold;font-size:13px;z-index:50;box-shadow:0 0 15px var(--c);display:flex;align-items:center;gap:5px}
 
 /* Admin Dashboard UI */
@@ -51,24 +75,12 @@ th{color:var(--c);font-size:13px}td{color:#e0f4ff;font-size:13px}
 .modal-content textarea{width:100%;height:100px;background:#000;color:#0f0;border:1px solid #0044aa;padding:10px;margin-bottom:10px;font-family:monospace;resize:none}
 </style>
 
-<!-- Firebase SDKs -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
   import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAA0Mp45_0BnRmh4FD1M9F5PZWij8WAJ7E",
-    authDomain: "nine-991.firebaseapp.com",
-    projectId: "nine-991",
-    storageBucket: "nine-991.firebasestorage.app",
-    messagingSenderId: "168686332846",
-    appId: "1:168686332846:web:db66bb7c0c91fd1edd763f",
-    measurementId: "G-JLC1CLLVQN"
-  };
-
+  const firebaseConfig = { apiKey: "AIzaSyAA0Mp45_0BnRmh4FD1M9F5PZWij8WAJ7E", authDomain: "nine-991.firebaseapp.com", projectId: "nine-991", storageBucket: "nine-991.firebasestorage.app", messagingSenderId: "168686332846", appId: "1:168686332846:web:db66bb7c0c91fd1edd763f", measurementId: "G-JLC1CLLVQN" };
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-
   window.dbRef = ref(db, 'extractions');
   window.pushData = push;
   window.onValueData = onValue;
@@ -77,13 +89,37 @@ th{color:var(--c);font-size:13px}td{color:#e0f4ff;font-size:13px}
 <body>
 
 <script>
-// ซ่อนรหัสผ่านหน้าเว็บ 1212
+// รหัสผ่านหน้าเว็บ 1212
 if(btoa(prompt("🔒 กรุณากรอกรหัสผ่าน:")||"")!=="MTIxMg=="){document.body.innerHTML="<h2 style=color:red;text-align:center;margin-top:40vh;font-family:sans-serif>❌ รหัสผ่านไม่ถูกต้อง</h2>";throw 0;}
 </script>
 
-<!-- หน้าหลัก Extractor -->
 <div id="mainUI" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-  <div class="banner-section"><img src="banner.png" alt="Nine Hub"></div>
+  
+  <!-- ดีไซน์ Header ใหม่สุดเฟี้ยว -->
+  <div class="hero-section">
+    <div class="top-nav">
+      <div class="nav-brand">
+        <div class="nav-logo">NS</div>
+        <div class="nav-title">
+          <strong>NINE SCRIPTS</strong>
+          <span>ศูนย์รวมสคริปต์</span>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="btn-nav sound-btn" onclick="location.reload()">↻ รีเฟรช</button>
+        <a href="https://discord.gg/ahRxUjabDP" target="_blank" class="btn-nav discord sound-btn">Discord ↗</a>
+      </div>
+    </div>
+
+    <div class="hero-center">
+      <div class="big-circle-logo">NINE</div>
+      <div class="status-badge"><div class="status-dot"></div> สคริปต์พร้อมใช้งาน</div>
+      <h1>ค้นหา แล้วเริ่มใช้<br><span class="highlight">NINE SCRIPTS</span></h1>
+      <p>รวมสคริปต์ไว้ในที่เดียว ค้นหาชื่อหรือแมพที่รองรับ เปิดดูรายละเอียด แล้วคัดลอกโค้ดได้ทันที</p>
+      <a href="https://discord.gg/ahRxUjabDP" target="_blank" class="btn-nav discord sound-btn" style="padding:10px 25px;font-size:14px;border-radius:30px">พูดคุยใน Discord ↗</a>
+    </div>
+  </div>
+
   <main class="cyber-panel">
     <div class="section-header">
       <div class="title-group">
@@ -117,163 +153,63 @@ if(btoa(prompt("🔒 กรุณากรอกรหัสผ่าน:")||"")
   </main>
 </div>
 
-<!-- ปุ่มเข้าหลังบ้าน มุมขวาล่าง -->
+<!-- หลังบ้าน -->
 <button class="admin-float-btn sound-btn" id="goAdminBtn">⚙️ หลังบ้าน</button>
-
-<!-- หน้าต่างหลังบ้าน (Admin Dashboard) -->
 <div id="adminPanel">
   <div class="admin-header">
-    <h1>NINE HUB <br><span>ระบบหลังบ้าน | จัดการข้อมูลการใช้งาน</span></h1>
+    <h1>NINE HUB <br><span>ระบบหลังบ้าน</span></h1>
     <div class="admin-date">
       <div style="font-size:20px;font-weight:bold;color:#fff" id="adminTime">00:00:00</div>
       <div id="adminDate">วัน เดือน ปี</div>
-      <button class="btn-small" style="margin-top:10px;background:#8c0050" onclick="exitAdmin()">🔙 กลับหน้าหลัก</button>
+      <button class="btn-small" style="margin-top:10px;background:#8c0050" onclick="exitAdmin()">🔙 กลับ</button>
     </div>
   </div>
-
   <div class="admin-stats">
-    <div class="stat-card">
-      <div class="stat-icon">👥</div>
-      <div class="stat-info"><h3>ผู้ใช้ทั้งหมด (Realtime)</h3><p id="statTotal">0</p></div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-icon">📱</div>
-      <div class="stat-info"><h3>อุปกรณ์ล่าสุด</h3><p id="statDevice">-</p></div>
-    </div>
+    <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-info"><h3>ผู้ใช้ทั้งหมด</h3><p id="statTotal">0</p></div></div>
+    <div class="stat-card"><div class="stat-icon">📱</div><div class="stat-info"><h3>อุปกรณ์ล่าสุด</h3><p id="statDevice">-</p></div></div>
   </div>
-
   <div class="admin-table-box">
-    <h3 style="margin-top:0;color:#fff">ประวัติการใช้งานล่าสุด</h3>
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>เวลาที่ใช้งาน</th>
-          <th>อุปกรณ์ (OS)</th>
-          <th>แอคชัน</th>
-        </tr>
-      </thead>
-      <tbody id="adminTableBody">
-        <!-- ข้อมูลโหลดจาก Firebase อัตโนมัติ -->
-      </tbody>
-    </table>
+    <h3 style="margin-top:0;color:#fff">ประวัติการใช้งาน</h3>
+    <table><thead><tr><th>#</th><th>เวลา</th><th>อุปกรณ์</th><th>แอคชัน</th></tr></thead><tbody id="adminTableBody"></tbody></table>
   </div>
 </div>
-
-<!-- Modal ดูรายละเอียด ก่อน-หลัง -->
-<div id="detailModal">
-  <div class="modal-content">
-    <h3>รายละเอียดสคริปต์</h3>
-    <div><strong style="color:#fff">ก่อน (URL ที่ผู้ใช้เอามาลง):</strong></div>
-    <textarea id="modalBefore" readonly></textarea>
-    <div><strong style="color:#fff">หลัง (LUA CODE ที่ดึงได้):</strong></div>
-    <textarea id="modalAfter" readonly></textarea>
-    <div style="text-align:right">
-      <button class="btn-action danger" style="display:inline-block;padding:5px 20px" onclick="document.getElementById('detailModal').style.display='none'">ปิดหน้าต่าง</button>
-    </div>
-  </div>
-</div>
-
+<div id="detailModal"><div class="modal-content"><h3>รายละเอียด</h3><div><strong style="color:#fff">ก่อน:</strong></div><textarea id="modalBefore" readonly></textarea><div><strong style="color:#fff">หลัง:</strong></div><textarea id="modalAfter" readonly></textarea><div style="text-align:right"><button class="btn-action danger" style="display:inline-block;padding:5px 20px" onclick="document.getElementById('detailModal').style.display='none'">ปิด</button></div></div></div>
 <div class="toast" id="toast"></div>
 
 <script>
 let aCtx;function pS(){if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();if(aCtx.state==='suspended')aCtx.resume();let o=aCtx.createOscillator(),g=aCtx.createGain();o.type='sine';o.frequency.setValueAtTime(800,aCtx.currentTime);o.frequency.exponentialRampToValueAtTime(300,aCtx.currentTime+.1);g.gain.setValueAtTime(.3,aCtx.currentTime);g.gain.exponentialRampToValueAtTime(.01,aCtx.currentTime+.1);o.connect(g);g.connect(aCtx.destination);o.start();o.stop(aCtx.currentTime+.1)}
 document.querySelectorAll('.sound-btn,.field').forEach(e=>e.addEventListener('mousedown',pS));
+function updateTime(){const d=new Date();document.getElementById('adminTime').innerText=d.toLocaleTimeString('th-TH');document.getElementById('adminDate').innerText=d.toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'})}
+setInterval(updateTime,1000);updateTime();
+document.getElementById('goAdminBtn').onclick=()=>{if(btoa(prompt("🔒 รหัสหลังบ้าน:")||"")==="MTMxMw=="){document.getElementById('mainUI').style.display='none';document.getElementById('goAdminBtn').style.display='none';document.getElementById('adminPanel').style.display='block';listenFirebaseData()}else{alert("❌ ผิด!")}};
+function exitAdmin(){document.getElementById('adminPanel').style.display='none';document.getElementById('mainUI').style.display='flex';document.getElementById('goAdminBtn').style.display='block'}
+const u=document.getElementById('urlInput'),o=document.getElementById('luaOutput'),sL=document.getElementById('statusLabel'),sp=document.getElementById('spinner'),lC=document.getElementById('lineCount'),t=document.getElementById('toast');
 
-function updateTime(){
-  const d = new Date();
-  document.getElementById('adminTime').innerText = d.toLocaleTimeString('th-TH');
-  document.getElementById('adminDate').innerText = d.toLocaleDateString('th-TH', {year:'numeric',month:'long',day:'numeric'});
-}
-setInterval(updateTime, 1000); updateTime();
+// 🔒 สังเกตตรงนี้! เราแนบรหัสลับ NINE_SECRET_1313 ไปกับลิงก์ด้วย
+const W='https://nine.natwarach9.workers.dev/?key=NINE_SECRET_1313&url=';
 
-document.getElementById('goAdminBtn').onclick = () => {
-  const pass = prompt("🔒 กรุณากรอกรหัสผ่านเพื่อเข้าระบบหลังบ้าน:");
-  if(btoa(pass || "") === "MTMxMw==") {
-    document.getElementById('mainUI').style.display = 'none';
-    document.getElementById('goAdminBtn').style.display = 'none';
-    document.getElementById('adminPanel').style.display = 'block';
-    listenFirebaseData();
-  } else {
-    alert("❌ รหัสผ่านไม่ถูกต้อง!");
-  }
-};
-function exitAdmin() {
-  document.getElementById('adminPanel').style.display = 'none';
-  document.getElementById('mainUI').style.display = 'flex';
-  document.getElementById('goAdminBtn').style.display = 'block';
-}
-
-const u=document.getElementById('urlInput'), o=document.getElementById('luaOutput'), sL=document.getElementById('statusLabel'), sp=document.getElementById('spinner'), lC=document.getElementById('lineCount'), t=document.getElementById('toast'), W='https://nine.natwarach9.workers.dev/?url=';
 let tT,fT,aC,rId=0;
-
 window.addEventListener('pageshow',()=>{u.value='';o.value='';uL();sS('รอการวางลิงก์',!1)});
 function nF(m){t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2000)}
 function sS(m,f){sL.textContent=m;f?sp.classList.add('fast'):sp.classList.remove('fast')}
 function uL(){const x=o.value;lC.textContent=`${x?x.split(/\r\n|\r|\n/).length:0} LINES`}
-const getDevice = () => /Android/i.test(navigator.userAgent) ? 'Android' : /iPhone|iPad/i.test(navigator.userAgent) ? 'iOS' : 'Windows/Mac';
-
+const getDevice=()=>/Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(navigator.userAgent)?'iOS':'Windows/Mac';
 async function fC(v){
-  const r=++rId, m=v.match(/https?:\/\/[^\s"'`()<>]+/i);
-  if(!m){sS('รอการวางลิงก์',!1);return}
-  if(aC)aC.abort(); aC=new AbortController(); sS('กำลังดึงโค้ด...',!0);
+  const r=++rId,m=v.match(/https?:\/\/[^\s"'`()<>]+/i);if(!m){sS('รอการวางลิงก์',!1);return}
+  if(aC)aC.abort();aC=new AbortController();sS('กำลังดึงโค้ด...',!0);
   try{
-    const res=await fetch(W+encodeURIComponent(m[0]),{signal:aC.signal}), txt=await res.text();
-    if(r!==rId)return; o.value=txt; uL(); sS('ดึงโค้ดสำเร็จ',!1); nF('✅ ดึงสำเร็จ');
-    
-    if(window.pushData && window.dbRef) {
-      window.pushData(window.dbRef, {
-        time: new Date().toLocaleTimeString('th-TH') + ' (' + new Date().toLocaleDateString('th-TH') + ')',
-        device: getDevice(),
-        url: m[0],
-        lua: txt
-      });
-    }
-  }catch(e){
-    if(r!==rId||e.name==='AbortError')return; o.value='-- Load failed'; uL(); sS('ดึงไม่สำเร็จ',!1); nF('❌ ล้มเหลว');
-  }
+    const res=await fetch(W+encodeURIComponent(m[0]),{signal:aC.signal}),txt=await res.text();
+    if(r!==rId)return;o.value=txt;uL();sS('ดึงโค้ดสำเร็จ',!1);nF('✅ สำเร็จ');
+    if(window.pushData&&window.dbRef)window.pushData(window.dbRef,{time:new Date().toLocaleTimeString('th-TH')+' ('+new Date().toLocaleDateString('th-TH')+')',device:getDevice(),url:m[0],lua:txt});
+  }catch(e){if(r!==rId||e.name==='AbortError')return;o.value='-- Load failed';uL();sS('ดึงไม่สำเร็จ',!1);nF('❌ ล้มเหลว')}
 }
 u.addEventListener('input',()=>{clearTimeout(fT);fT=setTimeout(()=>fC(u.value),650)});
 document.getElementById('pasteBtn').onclick=async()=>{try{const x=await navigator.clipboard.readText();if(x){u.value=x.trim();fC(u.value)}}catch{nF('กดค้างเพื่อวาง')}};
 document.getElementById('copyBtn').onclick=()=>{if(o.value){navigator.clipboard.writeText(o.value);nF('📋 คัดลอกแล้ว')}};
-document.getElementById('downloadBtn').onclick=()=>{if(o.value){const b=new Blob([o.value],{type:'text/plain;charset=utf-8'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='NINE-HUB.lua';l.click();nF('💾 ดาวน์โหลดแล้ว')}};
-document.getElementById('clearBtn').onclick=()=>{u.value='';o.value='';uL();sS('รอการวางลิงก์',!1);nF('🗑️ ล้างข้อมูลแล้ว')};
-
-function listenFirebaseData() {
-  if(window.onValueData && window.dbRef) {
-    window.onValueData(window.dbRef, (snapshot) => {
-      const data = snapshot.val();
-      let tbody = document.getElementById('adminTableBody');
-      tbody.innerHTML = '';
-      
-      if(data) {
-        const entries = Object.values(data).reverse();
-        document.getElementById('statTotal').innerText = entries.length;
-        document.getElementById('statDevice').innerText = entries[0].device;
-        
-        entries.forEach((item, index) => {
-          tbody.innerHTML += `
-            <tr>
-              <td>${index + 1}</td>
-              <td>${item.time}</td>
-              <td>${item.device}</td>
-              <td><button class="detail-btn sound-btn" onclick="showDetail('${encodeURIComponent(item.url)}', '${encodeURIComponent(item.lua)}')">ดูรายละเอียด</button></td>
-            </tr>
-          `;
-        });
-      } else {
-        document.getElementById('statTotal').innerText = '0';
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#8ab4f8">ยังไม่มีประวัติการใช้งาน</td></tr>`;
-      }
-    });
-  }
-}
-
-window.showDetail = function(url, lua) {
-  document.getElementById('modalBefore').value = decodeURIComponent(url);
-  document.getElementById('modalAfter').value = decodeURIComponent(lua);
-  document.getElementById('detailModal').style.display = 'flex';
-}
+document.getElementById('downloadBtn').onclick=()=>{if(o.value){const b=new Blob([o.value],{type:'text/plain;charset=utf-8'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='NINE-HUB.lua';l.click();nF('💾 โหลดแล้ว')}};
+document.getElementById('clearBtn').onclick=()=>{u.value='';o.value='';uL();sS('รอการวางลิงก์',!1);nF('🗑️ ล้างแล้ว')};
+function listenFirebaseData(){if(window.onValueData&&window.dbRef){window.onValueData(window.dbRef,(snapshot)=>{const data=snapshot.val();let tbody=document.getElementById('adminTableBody');tbody.innerHTML='';if(data){const entries=Object.values(data).reverse();document.getElementById('statTotal').innerText=entries.length;document.getElementById('statDevice').innerText=entries[0].device;entries.forEach((item,index)=>{tbody.innerHTML+=`<tr><td>${index+1}</td><td>${item.time}</td><td>${item.device}</td><td><button class="detail-btn sound-btn" onclick="showDetail('${encodeURIComponent(item.url)}','${encodeURIComponent(item.lua)}')">ดู</button></td></tr>`})}else{document.getElementById('statTotal').innerText='0';tbody.innerHTML=`<tr><td colspan="4" style="text-align:center;color:#8ab4f8">ยังไม่มีประวัติ</td></tr>`}})}}
+window.showDetail=function(url,lua){document.getElementById('modalBefore').value=decodeURIComponent(url);document.getElementById('modalAfter').value=decodeURIComponent(lua);document.getElementById('detailModal').style.display='flex'}
 </script>
 </body>
 </html>
