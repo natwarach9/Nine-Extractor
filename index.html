@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NINE HUB | EXTRACTOR SCRIPT</title>
+<style>
+:root{--c:#00d4ff;--bg:#010612;--panel:rgba(2,12,30,.85)}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:var(--bg)}
+body{font-family:sans-serif;color:#e0f4ff;overflow-x:hidden;background:radial-gradient(ellipse at 50% 0%,#0044aa 0%,transparent 50%),var(--bg);padding:15px 10px;display:flex;flex-direction:column;align-items:center}
+.banner-section{width:100%;max-width:500px;border-radius:16px 16px 0 0;overflow:hidden;box-shadow:0 -5px 25px #00d4ff33;z-index:1}.banner-section img{width:100%;display:block}
+.cyber-panel{width:100%;max-width:500px;background:var(--panel);border:2px solid #00d4ff80;border-radius:16px;padding:20px;z-index:2;margin-top:-15px;backdrop-filter:blur(10px);box-shadow:0 10px 30px #0008,inset 0 0 15px #00d4ff26}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.title-group{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:900;color:#fff;text-shadow:0 0 10px var(--c)}
+button{font:inherit;cursor:pointer;outline:none;border:none;transition:.15s}button:active{transform:scale(.92)}
+.btn-small{background:linear-gradient(180deg,#0050b499,#001e50cc);border:1px solid #00d4ff99;border-radius:20px;padding:5px 12px;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;gap:5px}
+.field{width:100%;background:#000612b3;border:1px solid #0088ff66;border-radius:12px;padding:12px;color:#fff;font-size:13px;resize:none;outline:none;font-family:Consolas,monospace}
+#urlInput{height:70px;padding-left:40px}#luaOutput{height:120px}
+.input-wrapper{position:relative;margin-bottom:5px}.input-icon{position:absolute;left:12px;top:14px;width:20px;height:20px;color:#00d4ffb3;pointer-events:none}
+.divider{height:2px;background:linear-gradient(90deg,transparent,#00d4ff80,transparent);margin:16px 0}
+.status-bar{display:flex;align-items:center;justify-content:space-between;background:#000f2899;border:1px solid #0088ff4d;border-radius:30px;padding:8px 14px}
+.spinner-icon{width:18px;height:18px;border:3px dashed var(--c);border-radius:50%;animation:spin 4s linear infinite}.spinner-icon.fast{border-style:solid;border-right-color:transparent;animation:spin .8s linear infinite}
+@keyframes spin{100%{transform:rotate(360deg)}}
+.actions-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:15px}
+.btn-action{background:linear-gradient(180deg,#003c8ccc,#00143ccc);border:1.5px solid #00d4ffcc;border-radius:30px;padding:10px 0;color:#fff;font-size:13px;font-weight:900;display:flex;justify-content:center;align-items:center;gap:6px}
+.btn-action.danger{background:linear-gradient(180deg,#8c0050cc,#3c0028cc);border-color:#ff0096cc}
+.toast{position:fixed;z-index:999;left:50%;bottom:25px;transform:translate(-50%,20px);background:#02142bf2;border:1px solid var(--c);border-radius:30px;padding:10px 25px;color:#fff;font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:.3s}.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ปุ่มหลังบ้านลอยตัว มุมขวาล่าง */
+.admin-float-btn{position:fixed;bottom:20px;right:20px;background:#003c8c;border:2px solid var(--c);color:#fff;padding:10px 18px;border-radius:30px;font-weight:bold;font-size:13px;z-index:50;box-shadow:0 0 15px var(--c);display:flex;align-items:center;gap:5px}
+
+/* Admin Dashboard UI */
+#adminPanel{display:none;position:fixed;inset:0;background:var(--bg);background-image:radial-gradient(ellipse at 50% 0%,#003388 0%,transparent 60%);z-index:100;overflow-y:auto;padding:20px}
+.admin-header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--c);padding-bottom:15px;margin-bottom:20px}
+.admin-header h1{margin:0;font-size:24px;color:#fff;text-shadow:0 0 10px var(--c)}
+.admin-header span{font-size:14px;color:var(--c);font-weight:normal}
+.admin-date{text-align:right;font-size:14px;color:#8ab4f8}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin-bottom:20px}
+.stat-card{background:var(--panel);border:1px solid #0088ff;border-radius:12px;padding:15px;display:flex;align-items:center;gap:15px;box-shadow:inset 0 0 10px #0088ff40}
+.stat-icon{width:40px;height:40px;background:#00d4ff33;border-radius:8px;display:flex;justify-content:center;align-items:center;font-size:20px}
+.stat-info h3{margin:0;font-size:12px;color:#a2c9ff}.stat-info p{margin:5px 0 0;font-size:24px;font-weight:bold;color:#fff}
+.admin-table-box{background:var(--panel);border:1px solid #0088ff;border-radius:12px;padding:15px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th,td{padding:12px;text-align:left;border-bottom:1px solid #0044aa}
+th{color:var(--c);font-size:13px}td{color:#e0f4ff;font-size:13px}
+.detail-btn{background:transparent;border:1px solid var(--c);color:var(--c);padding:4px 10px;border-radius:15px;font-size:11px}
+.detail-btn:hover{background:var(--c);color:#000}
+
+/* Modal Details */
+#detailModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;align-items:center;justify-content:center}
+.modal-content{background:#010a1a;border:2px solid var(--c);border-radius:12px;width:90%;max-width:600px;padding:20px;box-shadow:0 0 20px var(--c)}
+.modal-content h3{margin-top:0;color:var(--c)}
+.modal-content textarea{width:100%;height:100px;background:#000;color:#0f0;border:1px solid #0044aa;padding:10px;margin-bottom:10px;font-family:monospace;resize:none}
+</style>
+
+<!-- Firebase SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+  import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAA0Mp45_0BnRmh4FD1M9F5PZWij8WAJ7E",
+    authDomain: "nine-991.firebaseapp.com",
+    projectId: "nine-991",
+    storageBucket: "nine-991.firebasestorage.app",
+    messagingSenderId: "168686332846",
+    appId: "1:168686332846:web:db66bb7c0c91fd1edd763f",
+    measurementId: "G-JLC1CLLVQN"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  window.dbRef = ref(db, 'extractions');
+  window.pushData = push;
+  window.onValueData = onValue;
+</script>
+</head>
+<body>
+
+<script>
+// ซ่อนรหัสผ่านหน้าเว็บ 1212
+if(btoa(prompt("🔒 กรุณากรอกรหัสผ่าน:")||"")!=="MTIxMg=="){document.body.innerHTML="<h2 style=color:red;text-align:center;margin-top:40vh;font-family:sans-serif>❌ รหัสผ่านไม่ถูกต้อง</h2>";throw 0;}
+</script>
+
+<!-- หน้าหลัก Extractor -->
+<div id="mainUI" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+  <div class="banner-section"><img src="banner.png" alt="Nine Hub"></div>
+  <main class="cyber-panel">
+    <div class="section-header">
+      <div class="title-group">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M19.6 28.4 14 34a8 8 0 0 1-11.3-11.3l8-8A8 8 0 0 1 22 14.5M28.4 19.6l5.6-5.6a8 8 0 0 1 11.3 11.3l-8 8A8 8 0 0 1 26 33.5M16 32l16-16" stroke="#00d4ff" stroke-width="4.5" stroke-linecap="round"/></svg>
+        URL PASTE
+      </div>
+      <button class="btn-small sound-btn" id="pasteBtn">วางข้อความ</button>
+    </div>
+    <div class="input-wrapper">
+      <svg class="input-icon" viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <textarea class="field" id="urlInput" autocomplete="off" placeholder="วางลิงก์ [loadstring()] ที่นี่..."></textarea>
+    </div>
+    <div class="divider"></div>
+    <div class="status-bar">
+      <div style="display:flex;align-items:center;gap:10px"><div class="spinner-icon" id="spinner"></div><span style="font-size:12px;font-weight:800;color:#00d4ff" id="statusLabel">รอการวางลิงก์</span></div>
+      <div class="btn-small" style="pointer-events:none"><span id="lineCount">0 LINES</span></div>
+    </div>
+    <div class="divider"></div>
+    <div class="section-header">
+      <div class="title-group">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="m16 11-12 13 12 13M32 11l12 13-12 13M27 7 20 41" stroke="#00d4ff" stroke-width="4.5" stroke-linecap="round"/></svg>
+        LUA CODE
+      </div>
+    </div>
+    <textarea class="field" id="luaOutput" readonly autocomplete="off" placeholder="-- โค้ด Lua จะโหลดมาแสดงที่นี่..."></textarea>
+    <div class="actions-grid">
+      <button class="btn-action sound-btn" id="copyBtn">คัดลอก</button>
+      <button class="btn-action sound-btn" id="downloadBtn">โหลด</button>
+      <button class="btn-action danger sound-btn" id="clearBtn">ล้าง</button>
+    </div>
+  </main>
+</div>
+
+<!-- ปุ่มเข้าหลังบ้าน มุมขวาล่าง -->
+<button class="admin-float-btn sound-btn" id="goAdminBtn">⚙️ หลังบ้าน</button>
+
+<!-- หน้าต่างหลังบ้าน (Admin Dashboard) -->
+<div id="adminPanel">
+  <div class="admin-header">
+    <h1>NINE HUB <br><span>ระบบหลังบ้าน | จัดการข้อมูลการใช้งาน</span></h1>
+    <div class="admin-date">
+      <div style="font-size:20px;font-weight:bold;color:#fff" id="adminTime">00:00:00</div>
+      <div id="adminDate">วัน เดือน ปี</div>
+      <button class="btn-small" style="margin-top:10px;background:#8c0050" onclick="exitAdmin()">🔙 กลับหน้าหลัก</button>
+    </div>
+  </div>
+
+  <div class="admin-stats">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-info"><h3>ผู้ใช้ทั้งหมด (Realtime)</h3><p id="statTotal">0</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📱</div>
+      <div class="stat-info"><h3>อุปกรณ์ล่าสุด</h3><p id="statDevice">-</p></div>
+    </div>
+  </div>
+
+  <div class="admin-table-box">
+    <h3 style="margin-top:0;color:#fff">ประวัติการใช้งานล่าสุด</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>เวลาที่ใช้งาน</th>
+          <th>อุปกรณ์ (OS)</th>
+          <th>แอคชัน</th>
+        </tr>
+      </thead>
+      <tbody id="adminTableBody">
+        <!-- ข้อมูลโหลดจาก Firebase อัตโนมัติ -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal ดูรายละเอียด ก่อน-หลัง -->
+<div id="detailModal">
+  <div class="modal-content">
+    <h3>รายละเอียดสคริปต์</h3>
+    <div><strong style="color:#fff">ก่อน (URL ที่ผู้ใช้เอามาลง):</strong></div>
+    <textarea id="modalBefore" readonly></textarea>
+    <div><strong style="color:#fff">หลัง (LUA CODE ที่ดึงได้):</strong></div>
+    <textarea id="modalAfter" readonly></textarea>
+    <div style="text-align:right">
+      <button class="btn-action danger" style="display:inline-block;padding:5px 20px" onclick="document.getElementById('detailModal').style.display='none'">ปิดหน้าต่าง</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let aCtx;function pS(){if(!aCtx)aCtx=new(window.AudioContext||window.webkitAudioContext)();if(aCtx.state==='suspended')aCtx.resume();let o=aCtx.createOscillator(),g=aCtx.createGain();o.type='sine';o.frequency.setValueAtTime(800,aCtx.currentTime);o.frequency.exponentialRampToValueAtTime(300,aCtx.currentTime+.1);g.gain.setValueAtTime(.3,aCtx.currentTime);g.gain.exponentialRampToValueAtTime(.01,aCtx.currentTime+.1);o.connect(g);g.connect(aCtx.destination);o.start();o.stop(aCtx.currentTime+.1)}
+document.querySelectorAll('.sound-btn,.field').forEach(e=>e.addEventListener('mousedown',pS));
+
+function updateTime(){
+  const d = new Date();
+  document.getElementById('adminTime').innerText = d.toLocaleTimeString('th-TH');
+  document.getElementById('adminDate').innerText = d.toLocaleDateString('th-TH', {year:'numeric',month:'long',day:'numeric'});
+}
+setInterval(updateTime, 1000); updateTime();
+
+document.getElementById('goAdminBtn').onclick = () => {
+  const pass = prompt("🔒 กรุณากรอกรหัสผ่านเพื่อเข้าระบบหลังบ้าน:");
+  if(btoa(pass || "") === "MTMxMw==") {
+    document.getElementById('mainUI').style.display = 'none';
+    document.getElementById('goAdminBtn').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    listenFirebaseData();
+  } else {
+    alert("❌ รหัสผ่านไม่ถูกต้อง!");
+  }
+};
+function exitAdmin() {
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('mainUI').style.display = 'flex';
+  document.getElementById('goAdminBtn').style.display = 'block';
+}
+
+const u=document.getElementById('urlInput'), o=document.getElementById('luaOutput'), sL=document.getElementById('statusLabel'), sp=document.getElementById('spinner'), lC=document.getElementById('lineCount'), t=document.getElementById('toast'), W='https://nine.natwarach9.workers.dev/?url=';
+let tT,fT,aC,rId=0;
+
+window.addEventListener('pageshow',()=>{u.value='';o.value='';uL();sS('รอการวางลิงก์',!1)});
+function nF(m){t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2000)}
+function sS(m,f){sL.textContent=m;f?sp.classList.add('fast'):sp.classList.remove('fast')}
+function uL(){const x=o.value;lC.textContent=`${x?x.split(/\r\n|\r|\n/).length:0} LINES`}
+const getDevice = () => /Android/i.test(navigator.userAgent) ? 'Android' : /iPhone|iPad/i.test(navigator.userAgent) ? 'iOS' : 'Windows/Mac';
+
+async function fC(v){
+  const r=++rId, m=v.match(/https?:\/\/[^\s"'`()<>]+/i);
+  if(!m){sS('รอการวางลิงก์',!1);return}
+  if(aC)aC.abort(); aC=new AbortController(); sS('กำลังดึงโค้ด...',!0);
+  try{
+    const res=await fetch(W+encodeURIComponent(m[0]),{signal:aC.signal}), txt=await res.text();
+    if(r!==rId)return; o.value=txt; uL(); sS('ดึงโค้ดสำเร็จ',!1); nF('✅ ดึงสำเร็จ');
+    
+    if(window.pushData && window.dbRef) {
+      window.pushData(window.dbRef, {
+        time: new Date().toLocaleTimeString('th-TH') + ' (' + new Date().toLocaleDateString('th-TH') + ')',
+        device: getDevice(),
+        url: m[0],
+        lua: txt
+      });
+    }
+  }catch(e){
+    if(r!==rId||e.name==='AbortError')return; o.value='-- Load failed'; uL(); sS('ดึงไม่สำเร็จ',!1); nF('❌ ล้มเหลว');
+  }
+}
+u.addEventListener('input',()=>{clearTimeout(fT);fT=setTimeout(()=>fC(u.value),650)});
+document.getElementById('pasteBtn').onclick=async()=>{try{const x=await navigator.clipboard.readText();if(x){u.value=x.trim();fC(u.value)}}catch{nF('กดค้างเพื่อวาง')}};
+document.getElementById('copyBtn').onclick=()=>{if(o.value){navigator.clipboard.writeText(o.value);nF('📋 คัดลอกแล้ว')}};
+document.getElementById('downloadBtn').onclick=()=>{if(o.value){const b=new Blob([o.value],{type:'text/plain;charset=utf-8'}),l=document.createElement('a');l.href=URL.createObjectURL(b);l.download='NINE-HUB.lua';l.click();nF('💾 ดาวน์โหลดแล้ว')}};
+document.getElementById('clearBtn').onclick=()=>{u.value='';o.value='';uL();sS('รอการวางลิงก์',!1);nF('🗑️ ล้างข้อมูลแล้ว')};
+
+function listenFirebaseData() {
+  if(window.onValueData && window.dbRef) {
+    window.onValueData(window.dbRef, (snapshot) => {
+      const data = snapshot.val();
+      let tbody = document.getElementById('adminTableBody');
+      tbody.innerHTML = '';
+      
+      if(data) {
+        const entries = Object.values(data).reverse();
+        document.getElementById('statTotal').innerText = entries.length;
+        document.getElementById('statDevice').innerText = entries[0].device;
+        
+        entries.forEach((item, index) => {
+          tbody.innerHTML += `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${item.time}</td>
+              <td>${item.device}</td>
+              <td><button class="detail-btn sound-btn" onclick="showDetail('${encodeURIComponent(item.url)}', '${encodeURIComponent(item.lua)}')">ดูรายละเอียด</button></td>
+            </tr>
+          `;
+        });
+      } else {
+        document.getElementById('statTotal').innerText = '0';
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#8ab4f8">ยังไม่มีประวัติการใช้งาน</td></tr>`;
+      }
+    });
+  }
+}
+
+window.showDetail = function(url, lua) {
+  document.getElementById('modalBefore').value = decodeURIComponent(url);
+  document.getElementById('modalAfter').value = decodeURIComponent(lua);
+  document.getElementById('detailModal').style.display = 'flex';
+}
+</script>
+</body>
+</html>
