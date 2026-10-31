@@ -32,9 +32,9 @@
         .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
         .tg{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;color:#fff;text-shadow:0 0 10px var(--c)}
         .btn-s{background:linear-gradient(180deg,#0050b499,#001e50cc);border:1px solid #00d4ff99;border-radius:20px;padding:6px 14px;color:#fff;font-size:12px;font-weight:900;cursor:pointer}
-        .fld{width:100%;height:180px;background:#000612b3;border:1px solid #0088ff66;border-radius:12px;padding:12px;color:#fff;font-size:14px;font-weight:700;resize:vertical;outline:none;font-family:monospace!important}
+        .fld{width:100%;height:180px;background:#000612b3;border:1px solid #0088ff66;border-radius:12px;padding:12px 12px 12px 40px;color:#fff;font-size:14px;font-weight:700;resize:vertical;outline:none;font-family:monospace!important}
         .iw{position:relative;margin-bottom:5px}
-        .i-ic{position:absolute;left:12px;top:14px;width:20px;height:20px;color:#00d4ffb3;pointer-events:none}
+        .i-ic{position:absolute;left:12px;top:14px;width:20px;height:20px;color:#00d4ffb3;pointer-events:none;z-index:2}
         .divi{height:2px;background:linear-gradient(90deg,transparent,#00d4ff80,transparent);margin:16px 0}
         .sb{display:flex;justify-content:space-between;background:#000f2899;border:1px solid #0088ff4d;border-radius:30px;padding:8px 14px;align-items:center}
         .sp{width:18px;height:18px;border:3px dashed var(--c);border-radius:50%;animation:s 4s linear infinite}
@@ -72,19 +72,18 @@
 </head>
 <body>
 
-<!-- MODAL LOGIN หน้าแรก (รหัส: 1212) -->
+<!-- MODAL LOGIN -->
 <div id="modal-login" style="position:fixed;inset:0;background:rgba(1,6,18,0.98);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#021026;border:2px solid #00d4ff;border-radius:24px;padding:30px;width:100%;max-width:380px;text-align:center;box-shadow:0 0 30px rgba(0,212,255,0.3)">
     <div style="font-size:40px;margin-bottom:15px">🔒</div>
     <h3 style="color:#fff;margin:0 0 10px;font-size:22px">เข้าสู่ระบบ NINE HUB</h3>
-    <p style="color:#8ab4f8;font-size:13px;margin-bottom:20px">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งาน (รหัส: 1212)</p>
-    <input type="password" id="login-pin" placeholder="รหัสผ่าน" inputmode="numeric" style="width:100%;background:#000612;border:1px solid #0088ff;border-radius:12px;padding:12px;color:#fff;font-size:18px;text-align:center;letter-spacing:0.3em;outline:none;margin-bottom:15px;">
+    <p style="color:#8ab4f8;font-size:13px;margin-bottom:20px">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งาน</p>
+    <input type="password" id="login-pin" placeholder="รหัสผ่าน" autocomplete="off" inputmode="numeric" style="width:100%;background:#000612;border:1px solid #0088ff;border-radius:12px;padding:12px;color:#fff;font-size:18px;text-align:center;letter-spacing:0.3em;outline:none;margin-bottom:15px;">
     <button onclick="verifyLogin()" style="width:100%;background:linear-gradient(180deg,#0050b4,#001e50);border:1px solid #00d4ff;border-radius:12px;padding:12px;color:#fff;font-weight:900;cursor:pointer;font-size:15px;">เข้าสู่ระบบ</button>
   </div>
 </div>
 
 <script>
-// ป้องกันคลิกขวาและ F12
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{
     if(e.keyCode===123 || (e.ctrlKey && e.shiftKey && (e.keyCode===73 || e.keyCode===74 || e.keyCode===67)) || (e.ctrlKey && e.keyCode===85)){
@@ -94,17 +93,18 @@ document.addEventListener('keydown',e=>{
 
 function verifyLogin() {
   const pin = document.getElementById('login-pin').value;
-  if(pin === "1212" || btoa(pin) === "MTIxMg==") {
+  if(btoa(pin) === "MTIxMg==") {
     document.getElementById('modal-login').style.display = 'none';
   } else {
-    alert("❌ รหัสผ่านไม่ถูกต้อง! (รหัสคือ 1212)");
+    alert("❌ รหัสผ่านไม่ถูกต้อง!");
     document.getElementById('login-pin').value = "";
     document.getElementById('login-pin').focus();
   }
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('login-pin').focus();
+  const pinInput = document.getElementById('login-pin');
+  if(pinInput) pinInput.focus();
 });
 </script>
 
@@ -130,7 +130,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
     <div class="iw">
       <svg class="i-ic" viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-      <textarea class="fld" id="ui" placeholder="วางลิงก์หรือวางโค้ด Lua ที่นี่..."></textarea>
+      <textarea class="fld" id="ui" autocomplete="off" placeholder="วางลิงก์หรือวางโค้ด Lua ที่นี่..."></textarea>
     </div>
     <div class="divi"></div>
     <div class="sb">
@@ -139,7 +139,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
     <div class="divi"></div>
     <div class="sh"><div class="tg"><svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="m16 11-12 13 12 13M32 11l12 13-12 13M27 7 20 41" stroke="#00d4ff" stroke-width="4.5" stroke-linecap="round"/></svg> LUA CODE / DEOBFUSCATED</div></div>
-    <textarea class="fld" id="lo" readonly placeholder="-- ผลลัพธ์จะโผล่ที่นี่..."></textarea>
+    <textarea class="fld" id="lo" readonly autocomplete="off" placeholder="-- ผลลัพธ์จะโผล่ที่นี่..."></textarea>
     <div class="ag"><button class="ba" id="cb">คัดลอก</button><button class="ba" id="db">โหลด</button><button class="ba d" id="cl">ล้าง</button></div>
   </div>
 </div>
@@ -183,11 +183,18 @@ let tT, fT, aC, rI = 0;
 const $ = i => document.getElementById(i),
       ui = $('ui'), lo = $('lo'), sl = $('sl'), sp = $('sp'), lc = $('lc'), t = $('t');
 
-// ระบบหลังบ้าน (รหัสผ่าน: 1313)
+// ล้างข้อความเก่าทันทีเมื่อเข้าเว็บใหม่
+window.addEventListener('DOMContentLoaded', () => {
+    if(ui) ui.value = '';
+    if(lo) lo.value = '';
+    ul();
+});
+
+// ระบบหลังบ้าน
 $('gab').onclick = () => {
-    let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน (รหัส: 1313):");
+    let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน:");
     if(!pin) return;
-    if(pin === "1313" || btoa(pin) === "MTMxMw=="){
+    if(btoa(pin) === "MTMxMw=="){
         $('mUI').style.display = 'none';
         $('gab').style.display = 'none';
         $('ap').style.display = 'block';
@@ -208,7 +215,7 @@ $('gab').onclick = () => {
             });
         }
     } else {
-        alert("❌ รหัสผ่านหลังบ้านไม่ถูกต้อง! (รหัสคือ 1313)");
+        alert("❌ รหัสผ่านไม่ถูกต้อง!");
     }
 };
 
@@ -283,7 +290,7 @@ end);`;
             return;
         }
 
-        // ส่งไปยัง Render Backend พร้อมระบบรอรับ Cold Start (60 วินาที)
+        // ส่งไปยัง Render Backend
         ss('กำลังส่งไปที่ Render Backend (อาจใช้เวลาปลุกเซิร์ฟเวอร์สักครู่)...', true);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -331,19 +338,21 @@ end);`;
     }
 }
 
-// รองรับการพิมพ์ การวาง (Paste) แบบเรียลไทม์
 ui.addEventListener('input', () => { clearTimeout(fT); fT = setTimeout(() => fc(ui.value), 650); });
 ui.addEventListener('paste', () => { setTimeout(() => fc(ui.value), 100); });
 
+// ปรับปรุงปุ่มวางข้อความให้ใช้งานได้เสถียรยิ่งขึ้น
 $('pb').onclick = async () => { 
     try { 
-        const x = await navigator.clipboard.readText(); 
-        if(x){ 
-            ui.value = x.trim(); 
+        const text = await navigator.clipboard.readText(); 
+        if(text){ 
+            ui.value = text.trim(); 
             fc(ui.value); 
+            nf('📋 วางข้อความสำเร็จ');
         } 
     } catch { 
-        nf('กด Ctrl+V เพื่อวางข้อความ'); 
+        ui.focus();
+        nf('📌 คลิกในช่องแล้วกด Ctrl + V เพื่อวาง'); 
     } 
 };
 
