@@ -4,12 +4,12 @@
 <script type="module">import{initializeApp as i}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";import{getDatabase as g,ref as r,push as p,onValue as v}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";const f=JSON.parse(atob("eyJhcGlLZXkiOiJBSXphU3lBQTBNcDQ1XzBCblJtaDRGRDFNOUY1UFpXaWo4V0FKN0UiLCJhdXRoRG9tYWluIjoibmluZS05OTEiLCJzdG9yYWdlQnVja2V0IjoibmluZS05OTEuZmlyZWJhc2VhcHAuY29tIiwicHJvamVjdElkIjoibmluZS05OTEiLCJzdG9yYWdlQnVja2V0IjoibmluZS05OTEuZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiMTY4Njg2MzMyODQ2IiwiYXBwSWQiOiIxOjE2ODY4NjMzMjg0Njp3ZWI6ZGI2NmJiN2MwYzkxZmQxZWRkNzYzZiIsIm1lYXN1cmVtZW50SWQiOiJHLUpMQzFDTExWUU4ifQ=="));window.dbRef=r(g(i(f)),'extractions');window.pushData=p;window.onValueData=v;</script>
 </head><body>
 
-<!-- MODAL LOGIN ป้องกันการมองเห็นและบังคับใส่รหัส -->
+<!-- MODAL LOGIN หน้าแรก (รหัสผ่าน: 1212) -->
 <div id="modal-login" style="position:fixed;inset:0;background:rgba(1,6,18,0.95);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;">
   <div style="background:#021026;border:2px solid #00d4ff;border-radius:24px;padding:30px;width:100%;max-width:380px;text-align:center;box-shadow:0 0 30px rgba(0,212,255,0.3)">
     <div style="font-size:40px;margin-bottom:15px">🔒</div>
     <h3 style="color:#fff;margin:0 0 10px;font-size:22px">เข้าสู่ระบบ NINE HUB</h3>
-    <p style="color:#8ab4f8;font-size:13px;margin-bottom:20px">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งาน</p>
+    <p style="color:#8ab4f8;font-size:13px;margin-bottom:20px">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งาน (รหัส: 1212)</p>
     <input type="password" id="login-pin" placeholder="รหัสผ่าน" inputmode="numeric" style="width:100%;background:#000612;border:1px solid #0088ff;border-radius:12px;padding:12px;color:#fff;font-size:18px;text-align:center;letter-spacing:0.3em;outline:none;margin-bottom:15px;">
     <button onclick="verifyLogin()" style="width:100%;background:linear-gradient(180deg,#0050b4,#001e50);border:1px solid #00d4ff;border-radius:12px;padding:12px;color:#fff;font-weight:900;cursor:pointer;font-size:15px;">เข้าสู่ระบบ</button>
   </div>
@@ -21,10 +21,10 @@ document.addEventListener('keydown',e=>{if(123==e.keyCode||(e.ctrlKey&&e.shiftKe
 
 function verifyLogin() {
   const pin = document.getElementById('login-pin').value;
-  if(btoa(pin) === "MTIxMg==") {
+  if(pin === "1212" || btoa(pin) === "MTIxMg==") {
     document.getElementById('modal-login').style.display = 'none';
   } else {
-    alert("❌ รหัสผ่านไม่ถูกต้อง!");
+    alert("❌ รหัสผ่านไม่ถูกต้อง! (รหัสคือ 1212)");
     document.getElementById('login-pin').value = "";
     document.getElementById('login-pin').focus();
   }
@@ -61,7 +61,7 @@ window.addEventListener('DOMContentLoaded', () => {
   </div>
   <div class="iw">
     <svg class="i-ic" viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-    <textarea class="fld" id="ui" style="height:70px;padding-left:40px" placeholder="วางลิงก์หรือโค้ด Lua ที่นี่..."></textarea>
+    <textarea class="fld" id="ui" style="height:70px;padding-left:40px" placeholder="วางลิงก์หรือโค้ด Lua / Moonsec ที่นี่..."></textarea>
   </div>
   <div class="divi"></div>
   <div class="sb">
@@ -74,8 +74,29 @@ window.addEventListener('DOMContentLoaded', () => {
   <div class="ag"><button class="ba" id="cb">คัดลอก</button><button class="ba" id="db">โหลด</button><button class="ba d" id="cl">ล้าง</button></div>
 </div>
 </div>
-<button class="afb" id="gab">⚙️ หลังบ้าน</button><div id="ap"><div class="ah"><div><h1>NINE HUB</h1><span style="font-weight:900">ระบบหลังบ้าน</span></div><div style="text-align:right"><div id="at" style="font-size:22px;font-weight:900"></div><div id="ad" style="font-size:14px;color:#8ab4f8;font-weight:700"></div><button class="btn-s" style="margin-top:10px;background:#8c0050;float:right" onclick="eA()">🔙 ปิด</button></div></div><div class="ast"><div class="sc"><div style="font-size:24px">👥</div><div><h3 style="margin:0;font-size:12px;color:#a2c9ff">รวมทั้งหมด</h3><p id="st" style="margin:0;font-size:24px;font-weight:900">0</p></div></div><div class="sc"><div style="font-size:24px">📱</div><div><h3 style="margin:0;font-size:12px;color:#a2c9ff">ล่าสุด</h3><p id="sd" style="margin:0;font-size:16px;font-weight:900">-</p></div></div></div><div class="atb"><table><thead><tr><th>#</th><th>เวลา</th><th>อุปกรณ์</th><th>ดู</th></tr></thead><tbody id="atbd"></tbody></table></div></div>
+
+<button class="afb" id="gab">⚙️ หลังบ้าน</button>
+
+<div id="ap">
+  <div class="ah">
+    <div><h1>NINE HUB</h1><span style="font-weight:900">ระบบหลังบ้าน</span></div>
+    <div style="text-align:right">
+      <div id="at" style="font-size:22px;font-weight:900"></div>
+      <div id="ad" style="font-size:14px;color:#8ab4f8;font-weight:700"></div>
+      <button class="btn-s" style="margin-top:10px;background:#8c0050;float:right" onclick="eA()">🔙 ปิด</button>
+    </div>
+  </div>
+  <div class="ast">
+    <div class="sc"><div style="font-size:24px">👥</div><div><h3 style="margin:0;font-size:12px;color:#a2c9ff">รวมทั้งหมด</h3><p id="st" style="margin:0;font-size:24px;font-weight:900">0</p></div></div>
+    <div class="sc"><div style="font-size:24px">📱</div><div><h3 style="margin:0;font-size:12px;color:#a2c9ff">ล่าสุด</h3><p id="sd" style="margin:0;font-size:16px;font-weight:900">-</p></div></div>
+  </div>
+  <div class="atb">
+    <table><thead><tr><th>#</th><th>เวลา</th><th>อุปกรณ์</th><th>ดู</th></tr></thead><tbody id="atbd"></tbody></table>
+  </div>
+</div>
+
 <div id="dm"><div class="mc"><h3>รายละเอียด</h3><strong style="color:#fff">ก่อน:</strong><textarea id="mb" readonly></textarea><strong style="color:#fff">หลัง:</strong><textarea id="ma" readonly></textarea><div style="text-align:right"><button class="ba d" style="padding:8px 20px" onclick="document.getElementById('dm').style.display='none'">ปิด</button></div></div></div><div class="toast" id="t"></div>
+
 <script>
 const W=atob("aHR0cHM6Ly9uaW5lLm5hdHdhcmFjaDkud29ya2Vycy5kZXYvP3VybD="),gd=()=>/Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(navigator.userAgent)?'iOS':'PC';
 let tT,fT,aC,rI=0;const $=i=>document.getElementById(i),ui=$('ui'),lo=$('lo'),sl=$('sl'),sp=$('sp'),lc=$('lc'),t=$('t');
@@ -85,7 +106,32 @@ const lm=new Date(document.lastModified);$('s-t').innerText=lm.toLocaleDateStrin
 
 setTimeout(()=>{if(window.onValueData&&window.dbRef)window.onValueData(window.dbRef,s=>{const d=s.val();if(d){const c=Object.keys(d).length;$('s-e').innerText=c;$('s-v').innerText=c}})},1500);
 
-$('gab').onclick=()=>{if(btoa(prompt("🔒 รหัสหลังบ้าน:")||"")==="MTMxMw=="){$('mUI').style.display='none';$('gab').style.display='none';$('ap').style.display='block';if(window.onValueData&&window.dbRef)window.onValueData(window.dbRef,s=>{const d=s.val(),tb=$('atbd');tb.innerHTML='';if(d){const e=Object.values(d).reverse();$('st').innerText=e.length;$('sd').innerText=e[0].device;e.forEach((i,x)=>tb.innerHTML+=`<tr><td>${x+1}</td><td>${i.time}</td><td>${i.device}</td><td><button class="db" onclick="sD('${encodeURIComponent(i.url)}','${encodeURIComponent(i.lua)}')">ดู</button></td></tr>`)}else tb.innerHTML='<tr><td colspan="4">ไม่มีข้อมูล</td></tr>'})}else alert("❌")};
+// แก้ไขระบบหลังบ้านให้เข้าได้ชัวร์ (รหัสผ่านคือ 1313)
+$('gab').onclick=()=>{
+    let pin = prompt("🔒 รหัสหลังบ้าน (รหัส: 1313):");
+    if(!pin) return;
+    if(pin === "1313" || btoa(pin) === "MTMxMw=="){
+        $('mUI').style.display='none';
+        $('gab').style.display='none';
+        $('ap').style.display='block';
+        if(window.onValueData&&window.dbRef){
+            window.onValueData(window.dbRef,s=>{
+                const d=s.val(),tb=$('atbd');
+                tb.innerHTML='';
+                if(d){
+                    const e=Object.values(d).reverse();
+                    $('st').innerText=e.length;
+                    $('sd').innerText=e[0].device||'-';
+                    e.forEach((i,x)=>tb.innerHTML+=`<tr><td>${x+1}</td><td>${i.time}</td><td>${i.device}</td><td><button class="db" onclick="sD('${encodeURIComponent(i.url||'')}','${encodeURIComponent(i.lua||'')} ')">ดู</button></td></tr>`)
+                }else{
+                    tb.innerHTML='<tr><td colspan="4">ไม่มีข้อมูล</td></tr>';
+                }
+            })
+        }
+    }else{
+        alert("❌ รหัสผ่านหลังบ้านไม่ถูกต้อง! (รหัสคือ 1313)");
+    }
+};
 
 window.eA=()=>{$('ap').style.display='none';$('mUI').style.display='flex';$('gab').style.display='flex'};
 window.sD=(u,l)=>{$('mb').value=decodeURIComponent(u);$('ma').value=decodeURIComponent(l);$('dm').style.display='flex'};
@@ -107,22 +153,69 @@ async function fc(v){
 
         // ถ้าใส่เป็น URL ให้ดึงโค้ดมาก่อนผ่าน Cloudflare Worker
         if(m) {
-            ss('กำลังดึงข้อมูล...',!0);
+            ss('กำลังดึงข้อมูลจากลิงก์...',!0);
             const R = await fetch(W+encodeURIComponent(m[0]),{signal:aC.signal});
             codeToProcess = await R.text();
             if(r!==rI) return;
         }
 
-        // ส่งต่อไปยัง Render Backend เพื่อ Deobfuscate
-        ss('กำลังแกะโค้ด (Render Backend)...',!0);
-        const res = await fetch('https://nine-extractor-backend.onrender.com/deobfuscate', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code: codeToProcess }),
-            signal: aC.signal
-        });
-        const data = await res.json();
+        // ตรวจจับ Moonsec (รองรับทั้งแบบแปะลิงก์หรือวางโค้ดตรงๆ)
+        if(codeToProcess.toLowerCase().includes("moonsec") || codeToProcess.toLowerCase().includes("v3")) {
+            const targetUrl = m ? m[0] : "";
+            const dumperScript=`-- ⚠️ NINE EXTRACTOR: ตรวจพบการเข้ารหัส MoonSec (v3)
+-- 💡 วิธีใช้: นำโค้ดนี้ไปรันใน Executor ของคุณในเกม Roblox
+-- โค้ดแท้จะถูกดักจับและแสดงใน Console (F9) พร้อมคัดลอกให้อัตโนมัติ!
+
+local targetUrl = "${targetUrl}";
+local old_loadstring;
+
+old_loadstring = hookfunction(loadstring, function(code, chunkname)
+    print("====== [ 🔥 NINE EXTRACTOR: แกะโค้ดสำเร็จ! 🔥 ] ======");
+    print(code);
+    if setclipboard then setclipboard(code) end
+    return old_loadstring(code, chunkname)
+end);
+
+print("กำลังเจาะเกราะ MoonSec... รอสักครู่");
+task.spawn(function()
+    pcall(function()
+        if targetUrl ~= "" then
+            loadstring(game:HttpGet(targetUrl))()
+        else
+            loadstring([[${codeToProcess.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}]])()
+        end
+    end)
+end);`;
+            lo.value = dumperScript;
+            ul();
+            ss('สร้างตัวดักจับ MoonSec สำเร็จ!',!1);
+            nf('⚠️ ตรวจพบ MoonSec');
+            if(window.pushData&&window.dbRef) window.pushData(window.dbRef,{time:new Date().toLocaleString('th-TH'),device:gd(),url:m?m[0]:'Direct Paste Moonsec',lua:dumperScript});
+            return;
+        }
+
+        // ส่งต่อไปยัง Render Backend พร้อมระบบรอรับ Cold Start (60 วินาที)
+        ss('กำลังส่งไปที่ Render Backend (อาจใช้เวลาปลุกเซิร์ฟเวอร์สักครู่)...',!0);
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+        let res;
+        try {
+            res = await fetch('https://nine-extractor-backend.onrender.com/deobfuscate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: codeToProcess }),
+                signal: controller.signal
+            });
+        } catch(fetchErr) {
+            clearTimeout(timeoutId);
+            throw new Error("Render Backend กำลังหลับใหล (Cold Start) หรือใช้เวลาปลุกนานเกินไป กรุณากดปุ่มแกะโค้ดอีกครั้งครับ");
+        }
+        clearTimeout(timeoutId);
+
         if(r!==rI) return;
+        const data = await res.json();
 
         if(data.success && data.deobfuscated_code) {
             lo.value = data.deobfuscated_code;
@@ -131,23 +224,7 @@ async function fc(v){
             nf('✅ แกะโค้ดสำเร็จ');
             if(window.pushData&&window.dbRef) window.pushData(window.dbRef,{time:new Date().toLocaleString('th-TH'),device:gd(),url:m?m[0]:'Direct Paste',lua:data.deobfuscated_code});
         } else {
-            // ถ้าหลังบ้านแกะไม่ออกหรือเป็น MoonSec ให้ทำตามระบบเดิมหรือแสดงผลโค้ดดิบ
-            if(codeToProcess.includes("MoonSec")||codeToProcess.includes("moonsec")){
-                const dumperScript=`-- ⚠️ NINE EXTRACTOR: ตรวจพบการเข้ารหัสระดับสูง (MoonSec)
--- 💡 วิธีใช้: นำไปรันใน Executor ของคุณในเกม
-local targetUrl = "${m ? m[0] : 'Direct Code'}";
-local old_loadstring;
-old_loadstring = hookfunction(loadstring, function(code, chunkname)
-    print("====== [ 🔥 NINE EXTRACTOR: แกะโค้ดสำเร็จ! 🔥 ] ======");
-    print(code);
-    if setclipboard then setclipboard(code) end
-    return old_loadstring(code, chunkname)
-end);
-task.spawn(function() pcall(function() loadstring(codeToProcess)() end) end);`;
-                lo.value=dumperScript;
-            } else {
-                lo.value=data.error ? `-- Error: ${data.error}\n` + codeToProcess : codeToProcess;
-            }
+            lo.value = data.error ? `-- Error: ${data.error}\n\n` + codeToProcess : codeToProcess;
             ul();
             ss('ดำเนินการเสร็จสิ้น',!1);
             nf('⚠️ ตรวจสอบผลลัพธ์');
@@ -155,10 +232,10 @@ task.spawn(function() pcall(function() loadstring(codeToProcess)() end) end);`;
         }
     } catch(e){
         if(r!==rI||e.name==='AbortError') return;
-        lo.value='Failed: ' + e.message;
+        lo.value='-- Error / Failed: ' + e.message + '\n-- หมายเหตุ: เซิร์ฟเวอร์ Render กำลังตื่นจากการจำศีล (Cold Start) กรุณากดปุ่มแกะโค้ดซ้ำอีกครั้งครับ';
         ul();
-        ss('ล้มเหลว',!1);
-        nf('❌');
+        ss('ขัดข้อง/กำลังตื่น',!1);
+        nf('❌ เกิดข้อผิดพลาด');
     }
 }
 
