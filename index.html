@@ -32,7 +32,7 @@
         .sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
         .tg{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;color:#fff;text-shadow:0 0 10px var(--c)}
         .btn-s{background:linear-gradient(180deg,#0050b499,#001e50cc);border:1px solid #00d4ff99;border-radius:20px;padding:6px 14px;color:#fff;font-size:12px;font-weight:900;cursor:pointer}
-        .fld{width:100%;background:#000612b3;border:1px solid #0088ff66;border-radius:12px;padding:12px;color:#fff;font-size:14px;font-weight:700;resize:vertical;outline:none;font-family:monospace!important}
+        .fld{width:100%;height:180px;background:#000612b3;border:1px solid #0088ff66;border-radius:12px;padding:12px;color:#fff;font-size:14px;font-weight:700;resize:vertical;outline:none;font-family:monospace!important}
         .iw{position:relative;margin-bottom:5px}
         .i-ic{position:absolute;left:12px;top:14px;width:20px;height:20px;color:#00d4ffb3;pointer-events:none}
         .divi{height:2px;background:linear-gradient(90deg,transparent,#00d4ff80,transparent);margin:16px 0}
@@ -84,7 +84,7 @@
 </div>
 
 <script>
-// ป้องกันการกด F12 และคลิกขวาดูซอส
+// ป้องกันคลิกขวาและ F12
 document.addEventListener('contextmenu',e=>e.preventDefault());
 document.addEventListener('keydown',e=>{
     if(e.keyCode===123 || (e.ctrlKey && e.shiftKey && (e.keyCode===73 || e.keyCode===74 || e.keyCode===67)) || (e.ctrlKey && e.keyCode===85)){
@@ -112,13 +112,14 @@ window.addEventListener('DOMContentLoaded', () => {
   <div class="top-wrap">
     <div class="top-nav">
       <div class="nav-brand"><div class="nav-logo"><img src="logo.png" onerror="this.style.display='none'"></div><div class="nav-title"><strong>NINE SCRIPTS</strong><span>ระบบแกะสคริปต์</span></div></div>
-      <div class="nav-actions"><button class="btn-nav" onclick="location.reload()">↻ รีเฟรช</button> <a href="https://discord.gg/ahRxUjabDP" class="btn-nav discord">Discord ↗</a></div>
+      <div class="nav-actions"><button class="btn-nav" onclick="location.reload()">↻ รีเฟรช</button> <a href="https://discord.gg/ahRxUjabDP" target="_blank" rel="noopener noreferrer" class="btn-nav discord">Discord ↗</a></div>
     </div>
     <div class="hero-center">
       <div class="big-circle-logo"><img src="logo.png" onerror="this.style.display='none'"></div>
       <div class="status-badge"><div class="status-dot"></div> ระบบพร้อมทำงาน 100%</div>
       <h1>NINE EXTRACTOR<br><span class="hl">ระบบแกะโค้ด</span></h1>
       <p>เครื่องมือแกะสคริปต์ความเร็วสูง รองรับทุกรูปแบบ<br>ดึงโค้ดแท้ได้ทันที ปลอดภัยและแม่นยำที่สุด</p>
+      <a href="https://discord.gg/ahRxUjabDP" target="_blank" rel="noopener noreferrer" class="btn-nav discord" style="padding:12px 30px;font-size:16px;border-radius:30px">พูดคุยใน Discord ↗</a>
     </div>
   </div>
 
@@ -129,7 +130,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
     <div class="iw">
       <svg class="i-ic" viewBox="0 0 24 24" fill="none"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
-      <textarea class="fld" id="ui" style="height:90px;padding-left:40px" placeholder="วางลิงก์ (Pastebin/ScriptBlox) หรือวางโค้ด Lua ตรงนี้..."></textarea>
+      <textarea class="fld" id="ui" placeholder="วางลิงก์หรือวางโค้ด Lua ที่นี่..."></textarea>
     </div>
     <div class="divi"></div>
     <div class="sb">
@@ -138,7 +139,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
     <div class="divi"></div>
     <div class="sh"><div class="tg"><svg width="24" height="24" viewBox="0 0 48 48" fill="none"><path d="m16 11-12 13 12 13M32 11l12 13-12 13M27 7 20 41" stroke="#00d4ff" stroke-width="4.5" stroke-linecap="round"/></svg> LUA CODE / DEOBFUSCATED</div></div>
-    <textarea class="fld" id="lo" readonly style="height:180px" placeholder="-- ผลลัพธ์จะโผล่ที่นี่..."></textarea>
+    <textarea class="fld" id="lo" readonly placeholder="-- ผลลัพธ์จะโผล่ที่นี่..."></textarea>
     <div class="ag"><button class="ba" id="cb">คัดลอก</button><button class="ba" id="db">โหลด</button><button class="ba d" id="cl">ล้าง</button></div>
   </div>
 </div>
@@ -214,7 +215,7 @@ $('gab').onclick = () => {
 window.eA = () => { $('ap').style.display = 'none'; $('mUI').style.display = 'flex'; $('gab').style.display = 'flex'; };
 window.sD = (u, l) => { $('mb').value = decodeURIComponent(u); $('ma').value = decodeURIComponent(l); $('dm').style.display = 'flex'; };
 
-const nf = m => { t.textContent = m; t.className = 'toast s'; clearTimeout(tT); tT = setTimeout(() => t.className = 'toast', 2e2); },
+const nf = m => { t.textContent = m; t.className = 'toast s'; clearTimeout(tT); tT = setTimeout(() => t.className = 'toast', 2e3); },
       ss = (m, f) => { sl.textContent = m; sp.className = f ? 'sp f' : 'sp'; },
       ul = () => { const x = lo.value; lc.textContent = `${x ? x.split(/\r\n|\r|\n/).length : 0} LINES`; };
 
@@ -235,7 +236,6 @@ async function fc(v) {
             originalUrl = matchUrl[0];
             let fetchUrl = originalUrl;
             
-            // แก้ไขปัญหา Pastebin ให้ดึงแบบ Raw อัตโนมัติ
             if(fetchUrl.includes("pastebin.com/") && !fetchUrl.includes("/raw/")) {
                 fetchUrl = fetchUrl.replace("pastebin.com/", "pastebin.com/raw/");
             }
@@ -246,7 +246,7 @@ async function fc(v) {
             if(r !== rI) return;
         }
 
-        // ตรวจจับ Moonsec (รองรับทั้งแบบลิงก์และวางโค้ดตรงๆ)
+        // ตรวจจับ Moonsec
         if(codeToProcess.toLowerCase().includes("moonsec") || codeToProcess.toLowerCase().includes("v3")) {
             const dumperScript = `-- ⚠️ NINE EXTRACTOR: ตรวจพบการเข้ารหัส MoonSec (v3)
 -- 💡 วิธีใช้: นำสคริปต์นี้ไปรันใน Executor ของคุณในเกม Roblox
@@ -283,7 +283,7 @@ end);`;
             return;
         }
 
-        // ส่งต่อไปยัง Render Backend พร้อมตั้งเวลา Timeout 60 วินาทีเผื่อเซิร์ฟเวอร์หลับ (Cold Start)
+        // ส่งไปยัง Render Backend พร้อมระบบรอรับ Cold Start (60 วินาที)
         ss('กำลังส่งไปที่ Render Backend (อาจใช้เวลาปลุกเซิร์ฟเวอร์สักครู่)...', true);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -331,8 +331,22 @@ end);`;
     }
 }
 
+// รองรับการพิมพ์ การวาง (Paste) แบบเรียลไทม์
 ui.addEventListener('input', () => { clearTimeout(fT); fT = setTimeout(() => fc(ui.value), 650); });
-$('pb').onclick = async () => { try { const x = await navigator.clipboard.readText(); if(x){ ui.value = x.trim(); fc(ui.value); } } catch { nf('กดค้างเพื่อวาง'); } };
+ui.addEventListener('paste', () => { setTimeout(() => fc(ui.value), 100); });
+
+$('pb').onclick = async () => { 
+    try { 
+        const x = await navigator.clipboard.readText(); 
+        if(x){ 
+            ui.value = x.trim(); 
+            fc(ui.value); 
+        } 
+    } catch { 
+        nf('กด Ctrl+V เพื่อวางข้อความ'); 
+    } 
+};
+
 $('cb').onclick = () => { if(lo.value){ navigator.clipboard.writeText(lo.value); nf('📋 คัดลอกแล้ว'); } };
 $('db').onclick = () => { if(lo.value){ const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lo.value])); a.download = 'script.lua'; a.click(); nf('💾 โหลดแล้ว'); } };
 $('cl').onclick = () => { ui.value = lo.value = ''; ul(); ss('รอข้อมูล...', false); };
