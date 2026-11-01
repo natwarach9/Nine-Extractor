@@ -183,14 +183,13 @@ let tT, fT, aC, rI = 0;
 const $ = i => document.getElementById(i),
       ui = $('ui'), lo = $('lo'), sl = $('sl'), sp = $('sp'), lc = $('lc'), t = $('t');
 
-// ล้างข้อความเก่าทันทีเมื่อโหลดหน้าเว็บใหม่
 window.addEventListener('DOMContentLoaded', () => {
     if(ui) ui.value = '';
     if(lo) lo.value = '';
     ul();
 });
 
-// ระบบหลังบ้าน (รหัสผ่านเข้ารหัส Base64 ป้องกันมองเห็นตรงๆ)
+// ระบบหลังบ้าน
 $('gab').onclick = () => {
     let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน:");
     if(!pin) return;
@@ -252,6 +251,7 @@ async function fc(v) {
 
             ss('กำลังดึงข้อมูลผ่าน Worker...', true);
             const R = await fetch(W + encodeURIComponent(fetchUrl), { signal: aC.signal });
+            if (!R.ok) throw new Error("ไม่สามารถดึงข้อมูลจากลิงก์ได้ (HTTP " + R.status + ")");
             codeToProcess = await R.text();
             if(r !== rI) return;
         }
@@ -294,7 +294,7 @@ end);`;
         }
 
         // ส่งไปยัง Render Backend
-        ss('กำลังส่งไปที่ Render Backend (อาจใช้เวลาปลุกเซิร์ฟเวอร์สักครู่)...', true);
+        ss('กำลังส่งไปที่ Render Backend...', true);
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000);
 
@@ -308,7 +308,7 @@ end);`;
             });
         } catch(err) {
             clearTimeout(timeoutId);
-            throw new Error("Render Backend กำลังหลับใหล (Cold Start) กรุณากดปุ่มหรือพิมพ์ซ้ำอีกครั้งครับ");
+            throw new Error("Render Backend กำลังหลับใหล หรือใช้เวลาปลุกนานเกินไป กรุณากดใหม่อีกครั้ง");
         }
         clearTimeout(timeoutId);
 
@@ -334,40 +334,37 @@ end);`;
         }
     } catch(e) {
         if(r !== rI || e.name === 'AbortError') return;
-        lo.value = '-- Error: ' + e.message + '\n-- หมายเหตุ: หาก Render หลับใหล ให้ลองวางลิงก์หรือกดใหม่อีกครั้ง';
+        lo.value = '-- Error: ' + e.message;
         ul();
         ss('ล้มเหลว', false);
         nf('❌ เกิดข้อผิดพลาด');
     }
 }
 
-// ระบบดักจับการพิมพ์และการวางข้อความ (Paste) ให้ทำงานทันที 100%
+// ดักจับการพิมพ์และการวางข้อความแบบเรียลไทม์
 ui.addEventListener('input', () => { clearTimeout(fT); fT = setTimeout(() => fc(ui.value), 400); });
 ui.addEventListener('paste', (e) => {
-    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-    if (pastedText) {
-        setTimeout(() => {
-            ui.value = pastedText.trim();
-            fc(ui.value);
-        }, 50);
-    }
+    setTimeout(() => {
+        if(ui.value) fc(ui.value);
+    }, 150);
 });
 
-// ปุ่มวางข้อความ (แก้ไขให้ดึงจากคลิปบอร์ดมาใส่และประมวลผลทันที)
+// ปุ่ม "วางข้อความ" รองรับมือถือ (ถ้าเบราว์เซอร์อนุญาตจะดึงคลิปบอร์ดมาวางให้อัตโนมัติทันที และถ้าไม่อณุญาตจะโฟกัสให้กดวางได้ทันที)
 $('pb').onclick = async () => { 
     try { 
-        const text = await navigator.clipboard.readText(); 
-        if(text){ 
-            ui.value = text.trim(); 
-            fc(ui.value); 
-            nf('📋 วางข้อความสำเร็จ');
-        } else {
-            ui.focus();
-            nf('📌 ไม่มีข้อความในคลิปบอร์ด');
+        if (navigator.clipboard && navigator.clipboard.readText) {
+            const text = await navigator.clipboard.readText(); 
+            if(text){ 
+                ui.value = text.trim(); 
+                fc(ui.value); 
+                nf('📋 วางและประมวลผลแล้ว');
+                return;
+            }
         }
+        throw new Error();
     } catch { 
         ui.focus();
-        nf('📌 คลิกในช่องแล้วกด Ctrl + V เพื่อวาง'); 
+        nf('📌 แตะค้างที่ช่องกรอกแล้วกด "วาง" ได้เลย'); 
     } 
 };
 
