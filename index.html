@@ -27,7 +27,6 @@
         .nav-title strong { font-size: 13px; color: #fff; font-weight: 900; }
         .nav-title span { font-size: 10px; color: rgba(0,225,255,0.8); font-weight: 700; }
         
-        /* ปุ่มเด้งดึ้งๆ ทุกปุ่ม */
         button, .ba, .btn-s, .btn-nav, .afb {
             transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s, box-shadow 0.2s;
             cursor: pointer;
@@ -85,20 +84,33 @@
         .mc { background: #040e22; border: 2px solid var(--c); border-radius: 12px; width: 100%; max-width: 450px; padding: 18px; box-shadow: 0 0 25px rgba(0,225,255,0.3); }
         .mc textarea { width: 100%; height: 130px; background: #010612; color: #0f0; border: 1px solid rgba(0,68,170,0.6); padding: 8px; margin-bottom: 10px; font-family: monospace; resize: vertical; border-radius: 8px; }
 
-        /* บีบหน้าจอคอมพิวเตอร์ให้แคบลง แต่หน้าจอมือถือปล่อยไว้เต็ม 100% ตามเดิม */
         @media (min-width: 768px) {
             body { padding: 20px; }
             .top-wrap, .cyber-panel { max-width: 420px !important; }
         }
     </style>
-    <!-- Firebase SDK -->
+    
+    <!-- Firebase SDK (แก้ไข JSON Config สวยงาม ไม่มีคีย์ซ้ำ) -->
     <script type="module">
-        import{initializeApp as i}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-        import{getDatabase as g,ref as r,push as p,onValue as v}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
-        const f=JSON.parse(atob("eyJhcGlLZXkiOiJBSXphU3lBQTBNcDQ1XzBCblJtaDRGRDFNOUY1UFpXaWo4V0FKN0UiLCJhdXRoRG9tYWluIjoibmluZS05OTEiLCJzdG9yYWdlQnVja2V0IjoibmluZS05OTEuZmlyZWJhc2VhcHAuY29tIiwicHJvamVjdElkIjoibmluZS05OTEiLCJzdG9yYWdlQnVja2V0IjoibmluZS05OTEuZmlyZWJhc2VzdG9yYWdlLmFwcCIsIm1lc3NhZ2luZ1NlbmRlcklkIjoiMTY4Njg2MzMyODQ2IiwiYXBwSWQiOiIxOjE2ODY4NjMzMjg0Njp3ZWI6ZGI2NmJiN2MwYzkxZmQxZWRkNzYzZiIsIm1lYXN1cmVtZW50SWQiOiJHLUpMQzFDTExWUU4ifQ=="));
-        window.dbRef=r(g(i(f)),'extractions');
-        window.pushData=p;
-        window.onValueData=v;
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAA0Mp45_0BnRmh4FD1M9F5PZWij8WAJ7E",
+            authDomain: "nine-991.firebaseapp.com",
+            databaseURL: "https://nine-991-default-rtdb.firebaseio.com",
+            projectId: "nine-991",
+            storageBucket: "nine-991.appspot.com",
+            messagingSenderId: "168686332846",
+            appId: "1:168686332846:web:db66bb7c0c91fd1edd763f",
+            measurementId: "G-JLC1CLLVQN"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.dbRef = ref(db, 'extractions');
+        window.pushData = push;
+        window.onValueData = onValue;
     </script>
 </head>
 <body>
@@ -137,8 +149,8 @@ function verifyLogin() {
 window.addEventListener('DOMContentLoaded', () => {
   const pinInput = document.getElementById('login-pin');
   if(pinInput) pinInput.focus();
-  if(ui) ui.value = '';
-  if(lo) lo.value = '';
+  if($('ui')) $('ui').value = '';
+  if($('lo')) $('lo').value = '';
   ul();
 });
 </script>
@@ -214,7 +226,8 @@ window.addEventListener('DOMContentLoaded', () => {
 <div class="toast" id="t"></div>
 
 <script>
-const W = atob("aHR0cHM6Ly9uaW5lLm5hdHdhcmFjaDkud29ya2Vycy5kZXYvP3VybD=");
+// แก้ไข Base64 URL ของ Cloudflare Worker ให้ถูกต้องสมบูรณ์
+const W = "https://nine.natwarach9.workers.dev/?url=";
 const gd = () => /Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(navigator.userAgent)?'iOS':'PC';
 let tT, fT, aC, rI = 0;
 const $ = i => document.getElementById(i),
@@ -227,9 +240,9 @@ const showToast = m => {
     tT = setTimeout(() => t.className = 'toast', 2200);
 };
 
-// ปุ่มหลังบ้าน (รหัสผ่าน 1313)
+// ปุ่มเข้าหลังบ้าน (รหัส 1313)
 $('gab').onclick = () => {
-    let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน (รหัส: 1313):");
+    let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน:");
     if(!pin) return;
     pin = pin.trim();
     if(pin === "1313" || btoa(pin) === "MTMxMw=="){
@@ -371,10 +384,10 @@ end);`;
     }
 }
 
-ui.addEventListener('input', () => { clearTimeout(fT); fT = setTimeout(() => fc(ui.value), 400); });
+ui.addEventListener('input', () => { clearTimeout(fT); fT = setTimeout(() => fc(ui.value), 350); });
 ui.addEventListener('paste', () => { setTimeout(() => { if(ui.value) fc(ui.value); }, 100); });
 
-// ปุ่มวางข้อความ (ดึงจากคลิปบอร์ดอัตโนมัติทันที ไม่ต้องกดซ้ำซ้อน)
+// ปุ่ม "วางข้อความ" ดึงข้อมูลจากคลิปบอร์ดแล้วประมวลผลทันที
 $('pb').onclick = async () => {
     try {
         if (navigator.clipboard && navigator.clipboard.readText) {
@@ -382,14 +395,14 @@ $('pb').onclick = async () => {
             if (text) {
                 ui.value = text.trim();
                 fc(ui.value);
-                showToast('📋 วางและประมวลผลข้อความแล้ว!');
+                showToast('📋 วางและแกะโค้ดทันทีแล้ว!');
                 return;
             }
         }
         throw new Error();
     } catch {
         ui.focus();
-        showToast('📌 แตะค้างที่ช่องกรอกแล้วกด "วาง" ได้เลย');
+        showToast('📌 กด Ctrl+V หรือแตะค้างแล้วเลือกวางได้เลย');
     }
 };
 
