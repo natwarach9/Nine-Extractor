@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>NINE HUB | EXTRACTOR</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * { font-family: 'Prompt', sans-serif !important; -webkit-font-smoothing: antialiased; }
         .glass {
-          background: rgba(15, 23, 42, 0.75);
+          background: rgba(15, 23, 42, 0.6);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(56, 189, 248, 0.25);
+          border: 1px solid rgba(56, 189, 248, 0.15);
         }
         .fld { width: 100%; height: 160px; background: rgba(2, 6, 15, 0.95); border: 1px solid rgba(0,136,204,0.6); border-radius: 16px; padding: 12px; color: #fff; font-size: 13px; font-weight: 700; resize: vertical; outline: none; font-family: monospace !important; }
         .fld:focus { border-color: #00e1ff; box-shadow: 0 0 15px rgba(0,225,255,0.4); }
@@ -103,50 +103,53 @@ window.addEventListener('DOMContentLoaded', () => {
 <!-- UI หลัก -->
 <div id="mUI" style="width:100%;max-width:500px;display:flex;flex-direction:column;align-items:center;padding:15px;">
   
-  <!-- HERO SECTION (ดีไซน์ Glass ใหม่ที่ชอบ) -->
-  <div class="w-full">
-    <!-- Top Bar -->
-    <div class="glass rounded-[2rem] p-3 flex justify-between items-center mb-6 shadow-lg shadow-blue-900/20">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-full bg-blue-900/50 border border-cyan-400/50 flex items-center justify-center overflow-hidden shadow-[0_0_10px_rgba(34,211,238,0.3)]">
-          <span class="text-cyan-300 font-black text-sm">NS</span>
+  <!-- HERO SECTION (Exact Match Layout ตามที่คุณส่งมาเป๊ะๆ) -->
+  <div id="hero-section" class="w-full animate-fade-in">
+    <!-- Top Bar Navbar -->
+    <div class="max-w-2xl mx-auto px-4 pt-4">
+      <div class="glass rounded-[2rem] p-3 flex justify-between items-center mb-10 shadow-lg shadow-blue-900/20">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-blue-900/50 border border-cyan-400/50 flex items-center justify-center overflow-hidden shadow-[0_0_10px_rgba(34,211,238,0.3)]">
+            <span class="text-cyan-300 font-bold text-sm">NS</span>
+          </div>
+          <div>
+            <h1 class="text-white font-bold text-sm leading-tight">NINE SCRIPTS</h1>
+            <p class="text-[10px] text-blue-300/70">ศูนย์รวมสคริปต์</p>
+          </div>
         </div>
-        <div>
-          <h1 class="text-white font-black text-sm leading-tight">NINE SCRIPTS</h1>
-          <p class="text-[10px] text-blue-300/90 font-bold">ศูนย์รวมสคริปต์</p>
+        <div class="flex gap-2">
+          <button onclick="location.reload()" class="glass px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1 hover:bg-blue-900/50 transition-colors text-blue-200">↻ รีเฟรช</button>
+          <a href="https://discord.gg/enq9Cy4nwa" target="_blank" class="glass px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1 bg-blue-600/20 hover:bg-blue-500/30 text-cyan-300 transition-colors border-cyan-500/30">Discord ↗</a>
         </div>
-      </div>
-      <div class="flex gap-2">
-        <button onclick="location.reload()" class="glass px-3 py-1.5 rounded-xl text-xs font-black text-blue-200">↻ รีเฟรช</button>
-        <a href="https://discord.gg/enq9Cy4nwa" target="_blank" class="glass px-3 py-1.5 rounded-xl text-xs font-black text-cyan-300 border-cyan-500/30">Discord ↗</a>
       </div>
     </div>
 
-    <!-- Main Banner Content -->
-    <div class="flex flex-col items-center text-center px-4 mb-6">
-      <div class="w-20 h-20 rounded-full bg-[#0B1221] border-2 border-cyan-400 p-1 shadow-[0_0_20px_rgba(34,211,238,0.4)] mb-4 flex items-center justify-center">
-        <span class="text-cyan-300 font-black text-lg tracking-wider">NINE</span>
+    <!-- Main Banner & Title Section -->
+    <div class="max-w-2xl mx-auto flex flex-col items-center text-center px-4 mb-8">
+      <div class="w-24 h-24 rounded-full bg-[#0B1221] border border-cyan-400 p-1 shadow-[0_0_20px_rgba(34,211,238,0.4)] mb-5 flex items-center justify-center">
+        <span class="text-cyan-300 font-bold text-xl tracking-wider">NINE</span>
       </div>
-      <div class="glass px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 mb-4 flex items-center gap-2 border-cyan-500/30">
-        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span> ระบบพร้อมทำงาน 100%
+      <div class="glass px-4 py-1.5 rounded-full text-xs font-medium text-cyan-300 mb-5 flex items-center gap-2 border-cyan-500/30">
+        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span> สคริปต์พร้อมใช้งาน
       </div>
-      <h2 class="text-3xl md:text-4xl font-black text-white mb-2 tracking-tight">NINE EXTRACTOR<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)] font-black">ระบบแกะโค้ด</span></h2>
-      <p class="text-blue-100 font-bold text-xs md:text-sm max-w-sm mx-auto mb-4 leading-relaxed">เครื่องมือแกะสคริปต์ความเร็วสูง รองรับทุกรูปแบบ ดึงโค้ดแท้ได้ทันที</p>
+      <h2 class="text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight">ค้นหา แล้วเริ่มใช้<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">NINE SCRIPTS</span></h2>
+      <p class="text-blue-200/70 text-sm md:text-base max-w-md mx-auto mb-6 leading-relaxed">รวมสคริปต์ไว้ในที่เดียว ค้นหาชื่อหรือแมพที่รองรับ เปิดดูรายละเอียด แล้วคัดลอกโค้ดได้ทันที</p>
+      <a href="https://discord.gg/enq9Cy4nwa" target="_blank" class="glass border-blue-500/40 hover:bg-blue-900/40 px-6 py-2.5 rounded-full text-blue-200 font-medium flex items-center gap-2 shadow-lg shadow-blue-900/20 transition-all hover:scale-105 active:scale-95 text-sm">พูดคุยใน Discord ↗</a>
     </div>
 
-    <!-- Stats Cards Grid (ช่องเดิม: แกะสำเร็จ, แกะไม่สำเร็จ, อัปเดตล่าสุด) -->
-    <div class="grid grid-cols-3 gap-3 mb-6">
-      <div class="glass rounded-3xl p-3 text-center flex flex-col justify-center">
-        <span id="s-success" class="text-2xl font-black text-white">0</span>
-        <span class="text-[11px] text-blue-200 font-black mt-1">แกะสำเร็จ</span>
+    <!-- 3 Stats Cards Grid (ช่องเดิม: สคริปต์ทั้งหมด/แกะสำเร็จ, ยอดเข้าชม, อัปเดตล่าสุด) -->
+    <div class="max-w-2xl mx-auto grid grid-cols-3 gap-3 px-4 mb-8">
+      <div class="glass rounded-3xl p-4 text-center flex flex-col justify-center hover:border-cyan-400/40 transition-colors shadow-inner">
+        <span id="s-success" class="text-2xl md:text-3xl font-bold text-white drop-shadow-md">0</span>
+        <span class="text-[10px] md:text-xs text-blue-300/70 mt-1">แกะสำเร็จ</span>
       </div>
-      <div class="glass rounded-3xl p-3 text-center flex flex-col justify-center">
-        <span id="s-failed" class="text-2xl font-black text-white">0</span>
-        <span class="text-[11px] text-blue-200 font-black mt-1">แกะไม่สำเร็จ</span>
+      <div class="glass rounded-3xl p-4 text-center flex flex-col justify-center hover:border-cyan-400/40 transition-colors shadow-inner">
+        <span id="s-failed" class="text-2xl md:text-3xl font-bold text-white drop-shadow-md">0</span>
+        <span class="text-[10px] md:text-xs text-blue-300/70 mt-1">แกะไม่สำเร็จ</span>
       </div>
-      <div class="glass rounded-3xl p-3 text-center flex flex-col justify-center">
-        <span id="s-time" class="text-xl font-black text-white">-</span>
-        <span class="text-[11px] text-blue-200 font-black mt-1">อัปเดตล่าสุด</span>
+      <div class="glass rounded-3xl p-4 text-center flex flex-col justify-center hover:border-cyan-400/40 transition-colors shadow-inner">
+        <span id="s-time" class="text-xl md:text-3xl font-bold text-white drop-shadow-md">-</span>
+        <span class="text-[10px] md:text-xs text-blue-300/70 mt-1">อัปเดตล่าสุด</span>
       </div>
     </div>
   </div>
@@ -218,7 +221,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <!-- โค้ดระบบเสียง + สั่น + ฟังก์ชันแกะโค้ดตัวเดิมทั้งหมด -->
 <script>
-    // ระบบเสียง Web Audio API + สั่นมือถือ
     let aCtx;
     const playSnd = (type) => {
       try {
@@ -263,7 +265,6 @@ const showToast = m => {
     tT = setTimeout(() => t.className = 'toast', 2200);
 };
 
-// ซิงค์สถิติจาก Firebase Realtime Database
 window.addEventListener('DOMContentLoaded', () => {
     if(window.onValueData && window.dbRef){
         window.onValueData(window.dbRef, s => {
@@ -294,7 +295,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// หลังบ้าน (รหัส 1313)
 $('gab').onclick = () => {
     let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน:");
     if(!pin) return;
@@ -330,7 +330,6 @@ window.sD = (u, l) => { $('mb').value = decodeURIComponent(u); $('ma').value = d
 const ss = (m, f) => { sl.textContent = m; sp.className = f ? 'sp f' : 'sp'; },
       ul = () => { const x = lo.value; lc.textContent = `${x ? x.split(/\r\n|\r|\n/).length : 0} LINES`; };
 
-// ฟังก์ชันแกะโค้ดหลัก
 async function fc(v) {
     const r = ++rI, trimmed = (v || '').trim();
     if(!trimmed) { ss('รอข้อมูล...', false); return; }
