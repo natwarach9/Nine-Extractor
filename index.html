@@ -183,14 +183,14 @@ let tT, fT, aC, rI = 0;
 const $ = i => document.getElementById(i),
       ui = $('ui'), lo = $('lo'), sl = $('sl'), sp = $('sp'), lc = $('lc'), t = $('t');
 
-// ล้างข้อความเก่าทันทีเมื่อเข้าเว็บใหม่
+// ล้างข้อความเก่าทันทีเมื่อโหลดหน้าเว็บใหม่
 window.addEventListener('DOMContentLoaded', () => {
     if(ui) ui.value = '';
     if(lo) lo.value = '';
     ul();
 });
 
-// ระบบหลังบ้าน
+// ระบบหลังบ้าน (รหัสผ่านเข้ารหัส Base64 ป้องกันมองเห็นตรงๆ)
 $('gab').onclick = () => {
     let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน:");
     if(!pin) return;
@@ -228,8 +228,11 @@ const nf = m => { t.textContent = m; t.className = 'toast s'; clearTimeout(tT); 
 
 // ฟังก์ชันหลักในการแกะและดึงโค้ด
 async function fc(v) {
-    const r = ++rI, trimmed = v.trim();
-    if(!trimmed) return ss('รอข้อมูล...', false);
+    const r = ++rI, trimmed = (v || '').trim();
+    if(!trimmed) {
+        ss('รอข้อมูล...', false);
+        return;
+    }
     if(aC) aC.abort();
     aC = new AbortController();
     ss('กำลังประมวลผล...', true);
@@ -338,10 +341,19 @@ end);`;
     }
 }
 
-ui.addEventListener('input', () => { clearTimeout(fT); fT = setTimeout(() => fc(ui.value), 650); });
-ui.addEventListener('paste', () => { setTimeout(() => fc(ui.value), 100); });
+// ระบบดักจับการพิมพ์และการวางข้อความ (Paste) ให้ทำงานทันที 100%
+ui.addEventListener('input', () => { clearTimeout(fT); fT = setTimeout(() => fc(ui.value), 400); });
+ui.addEventListener('paste', (e) => {
+    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+    if (pastedText) {
+        setTimeout(() => {
+            ui.value = pastedText.trim();
+            fc(ui.value);
+        }, 50);
+    }
+});
 
-// ปรับปรุงปุ่มวางข้อความให้ใช้งานได้เสถียรยิ่งขึ้น
+// ปุ่มวางข้อความ (แก้ไขให้ดึงจากคลิปบอร์ดมาใส่และประมวลผลทันที)
 $('pb').onclick = async () => { 
     try { 
         const text = await navigator.clipboard.readText(); 
@@ -349,7 +361,10 @@ $('pb').onclick = async () => {
             ui.value = text.trim(); 
             fc(ui.value); 
             nf('📋 วางข้อความสำเร็จ');
-        } 
+        } else {
+            ui.focus();
+            nf('📌 ไม่มีข้อความในคลิปบอร์ด');
+        }
     } catch { 
         ui.focus();
         nf('📌 คลิกในช่องแล้วกด Ctrl + V เพื่อวาง'); 
@@ -358,7 +373,7 @@ $('pb').onclick = async () => {
 
 $('cb').onclick = () => { if(lo.value){ navigator.clipboard.writeText(lo.value); nf('📋 คัดลอกแล้ว'); } };
 $('db').onclick = () => { if(lo.value){ const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lo.value])); a.download = 'script.lua'; a.click(); nf('💾 โหลดแล้ว'); } };
-$('cl').onclick = () => { ui.value = lo.value = ''; ul(); ss('รอข้อมูล...', false); };
+$('cl').onclick = () => { ui.value = lo.value = ''; ul(); ss('รอข้อมูล...', false); nf('🧹 ล้างข้อมูลแล้ว'); };
 </script>
 </body>
 </html>
