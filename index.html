@@ -48,14 +48,6 @@
         window.dbRef = ref(db, 'extractions');
         window.pushData = push;
         window.onValueData = onValue;
-
-        window.fetchSecretPayload = async function() {
-            try {
-                const snap = await get(ref(db, 'secret_payloads/script_1'));
-                if (snap.exists()) return snap.val();
-            } catch(e) {}
-            return null;
-        };
     </script>
 </head>
 <body class="bg-[#070d1a] text-white min-h-screen flex flex-col items-center pb-12">
@@ -94,16 +86,15 @@ function verifyLogin() {
 window.addEventListener('DOMContentLoaded', () => {
   const pinInput = document.getElementById('login-pin');
   if(pinInput) pinInput.focus();
-  if(document.getElementById('ui')) document.getElementById('ui').value = '';
-  if(document.getElementById('lo')) document.getElementById('lo').value = '';
-  ul();
+  if(document.getElementById('inputUrl')) document.getElementById('inputUrl').value = '';
+  if(document.getElementById('outputLua')) document.getElementById('outputLua').value = '';
 });
 </script>
 
 <!-- UI หลัก -->
 <div id="mUI" style="width:100%;max-width:500px;display:flex;flex-direction:column;align-items:center;padding:15px;">
   
-  <!-- HERO SECTION (Exact Match Layout ตามที่คุณส่งมาเป๊ะๆ) -->
+  <!-- HERO SECTION -->
   <div id="hero-section" class="w-full animate-fade-in">
     <!-- Top Bar Navbar -->
     <div class="max-w-2xl mx-auto px-4 pt-4">
@@ -137,7 +128,7 @@ window.addEventListener('DOMContentLoaded', () => {
       <a href="https://discord.gg/enq9Cy4nwa" target="_blank" class="glass border-blue-500/40 hover:bg-blue-900/40 px-6 py-2.5 rounded-full text-blue-200 font-medium flex items-center gap-2 shadow-lg shadow-blue-900/20 transition-all hover:scale-105 active:scale-95 text-sm">พูดคุยใน Discord ↗</a>
     </div>
 
-    <!-- 3 Stats Cards Grid (ช่องเดิม: สคริปต์ทั้งหมด/แกะสำเร็จ, ยอดเข้าชม, อัปเดตล่าสุด) -->
+    <!-- 3 Stats Cards Grid -->
     <div class="max-w-2xl mx-auto grid grid-cols-3 gap-3 px-4 mb-8">
       <div class="glass rounded-3xl p-4 text-center flex flex-col justify-center hover:border-cyan-400/40 transition-colors shadow-inner">
         <span id="s-success" class="text-2xl md:text-3xl font-bold text-white drop-shadow-md">0</span>
@@ -154,28 +145,28 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 
-  <!-- Extractor Panel (ระบบเดิมครบถ้วน) -->
+  <!-- Extractor Panel (ใช้ระบบเดิมของ V1 ทางด้านสคริปต์ Worker) -->
   <div class="glass w-full rounded-3xl p-5 shadow-2xl">
     <div class="flex justify-between items-center mb-2">
-      <span class="text-xs font-black text-cyan-300">URL / CODE INPUT</span>
-      <button id="pb" class="glass px-3 py-1 rounded-xl text-xs font-black text-cyan-300 cursor-pointer">📋 วางข้อความ</button>
+      <span class="text-xs font-black text-cyan-300">// PASTE URL HERE //</span>
+      <button onclick="navigator.clipboard.readText().then(t => { document.getElementById('inputUrl').value = t.trim(); fetchScript(); })" class="glass px-3 py-1 rounded-xl text-xs font-black text-cyan-300 cursor-pointer">📋 วางข้อความ</button>
     </div>
-    <textarea class="fld mb-3" id="ui" autocomplete="off" placeholder="วางลิงก์หรือวางโค้ด Lua ที่นี่..."></textarea>
+    <textarea class="fld mb-3" id="inputUrl" autocomplete="off" placeholder="วางลิงก์ loadstring() หรือ URL ที่นี่..." oninput="fetchScript()"></textarea>
     
     <div class="flex justify-between items-center bg-black/40 border border-cyan-500/30 rounded-2xl px-4 py-2 mb-3">
-      <div class="flex gap-2 items-center"><div class="sp" id="sp"></div><span style="font-size:12px;color:#00e1ff;font-weight:900" id="sl">รอข้อมูล...</span></div>
-      <span class="text-xs text-blue-200 font-black" id="lc">0 LINES</span>
+      <div class="flex gap-2 items-center"><div class="sp" id="sp"></div><span style="font-size:12px;color:#00e1ff;font-weight:900" id="status">สถานะ: รอการวางลิงก์</span></div>
+      <span class="text-xs text-blue-200 font-black" id="lineCount">0 LINES</span>
     </div>
 
     <div class="flex justify-between items-center mb-2">
-      <span class="text-xs font-black text-cyan-300">LUA CODE / DEOBFUSCATED</span>
+      <span class="text-xs font-black text-cyan-300">// EXTRACTED LUA CODE //</span>
     </div>
-    <textarea class="fld mb-4" id="lo" readonly autocomplete="off" placeholder="-- ผลลัพธ์จะโผล่ที่นี่..."></textarea>
+    <textarea class="fld mb-4" id="outputLua" readonly autocomplete="off" placeholder="-- โค้ด Lua จะแสดงที่นี่..."></textarea>
     
     <div class="grid grid-cols-3 gap-2">
-        <button class="ba" id="cb">คัดลอก</button>
-        <button class="ba" id="db">โหลด</button>
-        <button class="ba d" id="cl">ล้าง</button>
+        <button class="ba" onclick="navigator.clipboard.writeText(finalCode); playSnd('copy'); showToast('📋 คัดลอกโค้ดแล้ว!');">คัดลอก</button>
+        <button class="ba" onclick="downloadCode()">ดาวโหลด</button>
+        <button class="ba d" onclick="clearAll()">ล้าง</button>
     </div>
   </div>
 </div>
@@ -183,7 +174,7 @@ window.addEventListener('DOMContentLoaded', () => {
 <!-- ปุ่มหลังบ้าน -->
 <button class="afb" id="gab">⚙️ หลังบ้าน</button>
 
-<!-- หน้าหลังบ้าน (ระบบเดิม) -->
+<!-- หน้าหลังบ้าน -->
 <div id="ap" style="display:none;position:fixed;inset:0;background:#070d1a;z-index:100;overflow-y:auto;padding:20px;">
   <div style="max-width:800px;margin:0 auto;">
     <div style="display:flex;justify-content:space-between;border-bottom:2px solid #00e1ff;padding-bottom:12px;margin-bottom:20px;align-items:center;">
@@ -207,7 +198,7 @@ window.addEventListener('DOMContentLoaded', () => {
   </div>
 </div>
 
-<!-- Modal ดูรายละเอียด (ระบบเดิม) -->
+<!-- Modal ดูรายละเอียด -->
 <div id="dm" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center;padding:15px;">
   <div class="glass" style="border-radius:16px;width:100%;max-width:500px;padding:20px;box-shadow:0 0 25px rgba(0,225,255,0.3);">
     <h3 style="margin-top:0;color:#00e1ff;font-weight:900;">รายละเอียดการใช้งาน</h3>
@@ -219,7 +210,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <div class="toast" id="t"></div>
 
-<!-- โค้ดระบบเสียง + สั่น + ฟังก์ชันแกะโค้ดตัวเดิมทั้งหมด -->
+<!-- โค้ดระบบเสียง + สั่น + ระบบ Worker ตัวเก่า + Firebase Sync -->
 <script>
     let aCtx;
     const playSnd = (type) => {
@@ -252,222 +243,166 @@ window.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-const W = "https://nine.natwarach9.workers.dev/?url=";
-const gd = () => /Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(navigator.userAgent)?'iOS':'PC';
-let tT, fT, aC, rI = 0;
-const $ = i => document.getElementById(i),
-      ui = $('ui'), lo = $('lo'), sl = $('sl'), sp = $('sp'), lc = $('lc'), t = $('t');
+    const gd = () => /Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(navigator.userAgent)?'iOS':'PC';
+    let finalCode = "";
+    const t = document.getElementById('t');
 
-const showToast = m => {
-    t.textContent = m;
-    t.className = 'toast s';
-    clearTimeout(tT);
-    tT = setTimeout(() => t.className = 'toast', 2200);
-};
+    const showToast = m => {
+        t.textContent = m;
+        t.className = 'toast s';
+        setTimeout(() => t.className = 'toast', 2200);
+    };
 
-window.addEventListener('DOMContentLoaded', () => {
-    if(window.onValueData && window.dbRef){
-        window.onValueData(window.dbRef, s => {
-            const d = s.val();
-            if(d){
-                const list = Object.values(d);
-                let successCount = 0;
-                let failedCount = 0;
-                
-                list.forEach(item => {
-                    if(item.status === 'success') successCount++;
-                    else failedCount++;
-                });
-
-                $('s-success').innerText = successCount;
-                $('s-failed').innerText = failedCount;
-
-                if(list.length > 0) {
-                    const lastItem = list[list.length - 1];
-                    $('s-time').innerText = lastItem.time ? lastItem.time.split(' ')[1] || lastItem.time : '-';
-                }
-            } else {
-                $('s-success').innerText = '0';
-                $('s-failed').innerText = '0';
-                $('s-time').innerText = '-';
-            }
-        });
-    }
-});
-
-$('gab').onclick = () => {
-    let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน:");
-    if(!pin) return;
-    pin = pin.trim();
-    if(btoa(pin) === "MTMxMw=="){
-        showToast('🔓 เข้าสู่ระบบหลังบ้านสำเร็จ!');
-        $('mUI').style.display = 'none';
-        $('gab').style.display = 'none';
-        $('ap').style.display = 'block';
+    // ซิงค์สถิติจาก Firebase
+    window.addEventListener('DOMContentLoaded', () => {
         if(window.onValueData && window.dbRef){
             window.onValueData(window.dbRef, s => {
-                const d = s.val(), tb = $('atbd');
-                tb.innerHTML = '';
+                const d = s.val();
                 if(d){
-                    const e = Object.values(d).reverse();
-                    e.forEach((i, x) => {
-                        const statusBadge = i.status === 'success' ? '<span style="color:#0f8;font-weight:900;">สำเร็จ</span>' : '<span style="color:#f55;font-weight:900;">ไม่สำเร็จ</span>';
-                        tb.innerHTML += `<tr style="border-bottom:1px solid rgba(0,68,170,0.3);"><td style="padding:10px;">${x+1}</td><td style="padding:10px;">${i.time}</td><td style="padding:10px;">${i.device}</td><td style="padding:10px;">${statusBadge}</td><td style="padding:10px;"><button class="db" style="background:0 0;border:1px solid #00e1ff;color:#00e1ff;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:900;cursor:pointer;" onclick="sD('${encodeURIComponent(i.url||'')}','${encodeURIComponent(i.lua||'')} ')">ดู</button></td></tr>`;
+                    const list = Object.values(d);
+                    let successCount = 0;
+                    let failedCount = 0;
+                    
+                    list.forEach(item => {
+                        if(item.status === 'success') successCount++;
+                        else failedCount++;
                     });
+
+                    document.getElementById('s-success').innerText = successCount;
+                    document.getElementById('s-failed').innerText = failedCount;
+
+                    if(list.length > 0) {
+                        const lastItem = list[list.length - 1];
+                        document.getElementById('s-time').innerText = lastItem.time ? lastItem.time.split(' ')[1] || lastItem.time : '-';
+                    }
                 } else {
-                    tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;font-weight:900;">ไม่มีข้อมูลในระบบ</td></tr>';
+                    document.getElementById('s-success').innerText = '0';
+                    document.getElementById('s-failed').innerText = '0';
+                    document.getElementById('s-time').innerText = '-';
                 }
             });
         }
-    } else {
-        alert("❌ รหัสผ่านไม่ถูกต้อง!");
-    }
-};
+    });
 
-window.eA = () => { $('ap').style.display = 'none'; $('mUI').style.display = 'flex'; $('gab').style.display = 'flex'; showToast('🔙 กลับสู่หน้าหลัก'); };
-window.sD = (u, l) => { $('mb').value = decodeURIComponent(u); $('ma').value = decodeURIComponent(l); $('dm').style.display = 'flex'; };
-
-const ss = (m, f) => { sl.textContent = m; sp.className = f ? 'sp f' : 'sp'; },
-      ul = () => { const x = lo.value; lc.textContent = `${x ? x.split(/\r\n|\r|\n/).length : 0} LINES`; };
-
-async function fc(v) {
-    const r = ++rI, trimmed = (v || '').trim();
-    if(!trimmed) { ss('รอข้อมูล...', false); return; }
-    if(aC) aC.abort();
-    aC = new AbortController();
-    ss('กำลังประมวลผล...', true);
-
-    try {
-        let codeToProcess = trimmed;
-        let originalUrl = "";
-        const matchUrl = trimmed.match(/https?:\/\/[^\s"'`()<>]+/i);
-
-        if(matchUrl) {
-            originalUrl = matchUrl[0];
-            let fetchUrl = originalUrl;
-            if(fetchUrl.includes("pastebin.com/") && !fetchUrl.includes("/raw/")) {
-                fetchUrl = fetchUrl.replace("pastebin.com/", "pastebin.com/raw/");
-            }
-            ss('กำลังดึงข้อมูลผ่าน Worker...', true);
-            const R = await fetch(W + encodeURIComponent(fetchUrl), { signal: aC.signal });
-            if (!R.ok) throw new Error("ไม่สามารถดึงข้อมูลจากลิงก์ได้ (HTTP " + R.status + ")");
-            codeToProcess = await R.text();
-            if(r !== rI) return;
-        }
-
-        if(codeToProcess.toLowerCase().includes("moonsec") || codeToProcess.toLowerCase().includes("v3")) {
-            const dumperScript = `-- ⚠️ NINE EXTRACTOR: ตรวจพบการเข้ารหัส MoonSec (v3)
--- 💡 วิธีใช้: นำสคริปต์นี้ไปรันใน Executor ของคุณในเกม Roblox
-
-local targetUrl = "${originalUrl}";
-local old_loadstring;
-old_loadstring = hookfunction(loadstring, function(code, chunkname)
-    print("====== [ 🔥 NINE EXTRACTOR: แกะโค้ดสำเร็จ! 🔥 ] ======");
-    print(code);
-    if setclipboard then setclipboard(code) end
-    return old_loadstring(code, chunkname)
-end);
-
-task.spawn(function()
-    pcall(function()
-        if targetUrl ~= "" then
-            loadstring(game:HttpGet(targetUrl))()
-        else
-            loadstring([[${codeToProcess.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')}]])()
-        end
-    end)
-end);`;
-
-            lo.value = dumperScript;
-            ul();
-            ss('สร้างตัวดักจับ MoonSec สำเร็จ!', false);
-            showToast('⚠️ ตรวจพบ Moonsec Dumper');
-            if(window.pushData && window.dbRef) {
-                window.pushData(window.dbRef, { time: new Date().toLocaleString('th-TH'), device: gd(), url: originalUrl || 'Direct Paste Moonsec', lua: dumperScript, status: 'success' });
-            }
-            return;
-        }
-
-        ss('กำลังส่งไปที่ Render Backend...', true);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-        let res;
-        try {
-            res = await fetch('https://nine-extractor-backend.onrender.com/deobfuscate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: codeToProcess }),
-                signal: controller.signal
-            });
-        } catch(err) {
-            clearTimeout(timeoutId);
-            throw new Error("Render Backend กำลังหลับใหล กรุณากดใหม่อีกครั้ง");
-        }
-        clearTimeout(timeoutId);
-
-        if(r !== rI) return;
-        const data = await res.json();
-
-        if(data.success && data.deobfuscated_code) {
-            lo.value = data.deobfuscated_code;
-            ul();
-            ss('แกะโค้ดสำเร็จ!', false);
-            showToast('✅ แกะโค้ดสำเร็จเรียบร้อย');
-            if(window.pushData && window.dbRef) {
-                window.pushData(window.dbRef, { time: new Date().toLocaleString('th-TH'), device: gd(), url: originalUrl || 'Direct Paste', lua: data.deobfuscated_code, status: 'success' });
+    // หลังบ้าน (รหัส 1313)
+    document.getElementById('gab').onclick = () => {
+        let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน:");
+        if(!pin) return;
+        pin = pin.trim();
+        if(btoa(pin) === "MTMxMw=="){
+            showToast('🔓 เข้าสู่ระบบหลังบ้านสำเร็จ!');
+            document.getElementById('mUI').style.display = 'none';
+            document.getElementById('gab').style.display = 'none';
+            document.getElementById('ap').style.display = 'block';
+            if(window.onValueData && window.dbRef){
+                window.onValueData(window.dbRef, s => {
+                    const d = s.val(), tb = document.getElementById('atbd');
+                    tb.innerHTML = '';
+                    if(d){
+                        const e = Object.values(d).reverse();
+                        e.forEach((i, x) => {
+                            const statusBadge = i.status === 'success' ? '<span style="color:#0f8;font-weight:900;">สำเร็จ</span>' : '<span style="color:#f55;font-weight:900;">ไม่สำเร็จ</span>';
+                            tb.innerHTML += `<tr style="border-bottom:1px solid rgba(0,68,170,0.3);"><td style="padding:10px;">${x+1}</td><td style="padding:10px;">${i.time}</td><td style="padding:10px;">${i.device}</td><td style="padding:10px;">${statusBadge}</td><td style="padding:10px;"><button style="background:0 0;border:1px solid #00e1ff;color:#00e1ff;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:900;cursor:pointer;" onclick="sD('${encodeURIComponent(i.url||'')}','${encodeURIComponent(i.lua||'')} ')">ดู</button></td></tr>`;
+                        });
+                    } else {
+                        tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;font-weight:900;">ไม่มีข้อมูลในระบบ</td></tr>';
+                    }
+                });
             }
         } else {
-            let remoteSecret = "";
-            if (window.fetchSecretPayload) {
-                remoteSecret = await window.fetchSecretPayload();
-            }
+            alert("❌ รหัสผ่านไม่ถูกต้อง!");
+        }
+    };
 
-            const errReason = data.error ? `-- Error: ${data.error}\n\n` + (remoteSecret || codeToProcess) : (remoteSecret || codeToProcess);
-            lo.value = errReason;
-            ul();
-            ss('ดำเนินการเสร็จสิ้น', false);
-            showToast('⚠️ ตรวจสอบผลลัพธ์');
-            if(window.pushData && window.dbRef) {
-                window.pushData(window.dbRef, { time: new Date().toLocaleString('th-TH'), device: gd(), url: originalUrl || 'Direct Paste', lua: lo.value, status: 'failed' });
-            }
-        }
-    } catch(e) {
-        if(r !== rI || e.name === 'AbortError') return;
-        lo.value = '-- Error: ' + e.message;
-        ul();
-        ss('ล้มเหลว', false);
-        showToast('❌ เกิดข้อผิดพลาด');
-        if(window.pushData && window.dbRef) {
-            window.pushData(window.dbRef, { time: new Date().toLocaleString('th-TH'), device: gd(), url: v, lua: e.message, status: 'failed' });
-        }
+    window.eA = () => { document.getElementById('ap').style.display = 'none'; document.getElementById('mUI').style.display = 'flex'; document.getElementById('gab').style.display = 'flex'; showToast('🔙 กลับสู่หน้าหลัก'); };
+    window.sD = (u, l) => { document.getElementById('mb').value = decodeURIComponent(u); document.getElementById('ma').value = decodeURIComponent(l); document.getElementById('dm').style.display = 'flex'; };
+
+    // ฟังก์ชันลบโค้ดขยะตัวเดิมจาก V1
+    function cleanJunkCode(code) {
+        return code
+            .replace(/if\s+false\s+then.*?end/gs, '')
+            .replace(/^--.*$/gm, '')
+            .replace(/^\s*[\r\n]/gm, '')
+            .trim();
     }
-}
 
-ui.addEventListener('input', () => { clearTimeout(fT); fT = setTimeout(() => fc(ui.value), 350); });
-ui.addEventListener('paste', () => { setTimeout(() => { if(ui.value) fc(ui.value); }, 100); });
-
-$('pb').onclick = async () => {
-    try {
-        if (navigator.clipboard && navigator.clipboard.readText) {
-            const text = await navigator.clipboard.readText();
-            if (text) {
-                ui.value = text.trim();
-                fc(ui.value);
-                showToast('📋 วางและแกะโค้ดทันทีแล้ว!');
+    // ฟังก์ชันดึงสคริปต์ด้วย Worker ตัวเดิม (secret.natwarach99.workers.dev) + บันทึกสถิติลง Firebase
+    let fT;
+    function fetchScript() {
+        clearTimeout(fT);
+        fT = setTimeout(async () => {
+            let elInput = document.getElementById('inputUrl');
+            let elOutput = document.getElementById('outputLua');
+            let elStatus = document.getElementById('status');
+            let elLines = document.getElementById('lineCount');
+            let elSp = document.getElementById('sp');
+            
+            let rawInput = elInput.value.trim();
+            if (!rawInput) {
+                elStatus.innerText = "สถานะ: รอการวางลิงก์";
+                elSp.className = "sp";
                 return;
             }
-        }
-        throw new Error();
-    } catch {
-        ui.focus();
-        showToast('📌 กด Ctrl+V หรือแตะค้างแล้วเลือกวางได้เลย');
-    }
-};
 
-$('cb').onclick = () => { if(lo.value){ navigator.clipboard.writeText(lo.value); playSnd('copy'); showToast('📋 คัดลอกผลลัพธ์แล้ว!'); } else { showToast('⚠️ ไม่มีข้อความให้คัดลอก'); } };
-$('db').onclick = () => { if(lo.value){ const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lo.value])); a.download = 'script.lua'; a.click(); showToast('💾 ดาวน์โหลดไฟล์แล้ว!'); } else { showToast('⚠️ ไม่มีข้อความให้ดาวน์โหลด'); } };
-$('cl').onclick = () => { ui.value = lo.value = ''; ul(); ss('รอข้อมูล...', false); showToast('🧹 ล้างข้อมูลเรียบร้อย'); };
+            let extractedUrl = rawInput.match(/https?:\/\/[^\s"'`()\<>]+/i)?.[0] || rawInput; 
+            if (!extractedUrl.startsWith('http')) return;
+            
+            elStatus.innerText = "สถานะ: กำลังดึงและถอดรหัส...";
+            elSp.className = "sp f";
+            
+            try {
+                let res = await fetch(`https://secret.natwarach99.workers.dev/?url=${encodeURIComponent(extractedUrl)}`);
+                if (!res.ok) throw new Error("Worker ตอบกลับว่าเกิดข้อผิดพลาด");
+                
+                let rawLua = await res.text();
+                finalCode = cleanJunkCode(rawLua); 
+                
+                elOutput.value = finalCode; 
+                elStatus.innerText = "สถานะ: สำเร็จ!";
+                elSp.className = "sp";
+                
+                let lines = finalCode.split('\n').length;
+                elLines.innerText = lines + " LINES";
+                showToast('✅ แกะโค้ดสำเร็จเรียบร้อย');
+
+                if(window.pushData && window.dbRef) {
+                    window.pushData(window.dbRef, { time: new Date().toLocaleString('th-TH'), device: gd(), url: extractedUrl, lua: finalCode, status: 'success' });
+                }
+
+            } catch (err) {
+                elStatus.innerText = "สถานะ: ล้มเหลว (Antiraw บล็อก / ลิงก์ตาย)";
+                elSp.className = "sp";
+                elOutput.value = "-- " + err.message;
+                showToast('❌ เกิดข้อผิดพลาด');
+
+                if(window.pushData && window.dbRef) {
+                    window.pushData(window.dbRef, { time: new Date().toLocaleString('th-TH'), device: gd(), url: extractedUrl, lua: err.message, status: 'failed' });
+                }
+            }
+        }, 350);
+    }
+
+    function downloadCode() {
+        if (!finalCode) {
+            showToast('⚠️ ไม่มีข้อความให้ดาวน์โหลด');
+            return;
+        }
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([finalCode], {type: "text/plain"}));
+        a.download = 'N99_Extracted_Script.txt';
+        a.click();
+        showToast('💾 ดาวน์โหลดไฟล์แล้ว!');
+    }
+
+    function clearAll() {
+        document.getElementById('inputUrl').value = '';
+        document.getElementById('outputLua').value = '';
+        document.getElementById('status').innerText = 'สถานะ: รอการวางลิงก์';
+        document.getElementById('lineCount').innerText = '0 LINES';
+        document.getElementById('sp').className = 'sp';
+        finalCode = '';
+        showToast('🧹 ล้างข้อมูลเรียบร้อย');
+    }
 </script>
 </body>
 </html>
