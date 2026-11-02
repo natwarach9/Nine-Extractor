@@ -145,7 +145,7 @@ window.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 
-  <!-- Extractor Panel (ใช้ระบบเดิมของ V1 ทางด้านสคริปต์ Worker) -->
+  <!-- Extractor Panel -->
   <div class="glass w-full rounded-3xl p-5 shadow-2xl">
     <div class="flex justify-between items-center mb-2">
       <span class="text-xs font-black text-cyan-300">// PASTE URL HERE //</span>
@@ -210,7 +210,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 <div class="toast" id="t"></div>
 
-<!-- โค้ดระบบเสียง + สั่น + ระบบ Worker ตัวเก่า + Firebase Sync -->
+<!-- โค้ดระบบเสียง + สั่น + ระบบ Worker ตัวจริงของพี่ Nine + Firebase Sync -->
 <script>
     let aCtx;
     const playSnd = (type) => {
@@ -317,7 +317,7 @@ window.addEventListener('DOMContentLoaded', () => {
     window.eA = () => { document.getElementById('ap').style.display = 'none'; document.getElementById('mUI').style.display = 'flex'; document.getElementById('gab').style.display = 'flex'; showToast('🔙 กลับสู่หน้าหลัก'); };
     window.sD = (u, l) => { document.getElementById('mb').value = decodeURIComponent(u); document.getElementById('ma').value = decodeURIComponent(l); document.getElementById('dm').style.display = 'flex'; };
 
-    // ฟังก์ชันลบโค้ดขยะตัวเดิมจาก V1
+    // ฟังก์ชันลบโค้ดขยะตัวเดิม
     function cleanJunkCode(code) {
         return code
             .replace(/if\s+false\s+then.*?end/gs, '')
@@ -326,7 +326,7 @@ window.addEventListener('DOMContentLoaded', () => {
             .trim();
     }
 
-    // ฟังก์ชันดึงสคริปต์ด้วย Worker ตัวเดิม (secret.natwarach99.workers.dev) + บันทึกสถิติลง Firebase
+    // ฟังก์ชันดึงสคริปต์ด้วย Worker ตัวจริง (https://nine.natwarach9.workers.dev/?url=)
     let fT;
     function fetchScript() {
         clearTimeout(fT);
@@ -351,7 +351,7 @@ window.addEventListener('DOMContentLoaded', () => {
             elSp.className = "sp f";
             
             try {
-                let res = await fetch(`https://secret.natwarach99.workers.dev/?url=${encodeURIComponent(extractedUrl)}`);
+                let res = await fetch(`https://nine.natwarach9.workers.dev/?url=${encodeURIComponent(extractedUrl)}`);
                 if (!res.ok) throw new Error("Worker ตอบกลับว่าเกิดข้อผิดพลาด");
                 
                 let rawLua = await res.text();
