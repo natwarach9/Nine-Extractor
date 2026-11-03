@@ -1,408 +1,634 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>NINE HUB | EXTRACTOR</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <style>
-        * { font-family: 'Prompt', sans-serif !important; -webkit-font-smoothing: antialiased; }
-        .glass {
-          background: rgba(15, 23, 42, 0.6);
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(56, 189, 248, 0.15);
-        }
-        .fld { width: 100%; height: 160px; background: rgba(2, 6, 15, 0.95); border: 1px solid rgba(0,136,204,0.6); border-radius: 16px; padding: 12px; color: #fff; font-size: 13px; font-weight: 700; resize: vertical; outline: none; font-family: monospace !important; }
-        .fld:focus { border-color: #00e1ff; box-shadow: 0 0 15px rgba(0,225,255,0.4); }
-        .ba { background: linear-gradient(180deg, rgba(0,90,200,0.9), rgba(0,30,90,0.95)); border: 1.5px solid rgba(0,225,255,0.8); border-radius: 30px; padding: 10px 0; color: #fff; font-size: 13px; font-weight: 900; text-align: center; cursor: pointer; transition: 0.15s; }
-        .ba.d { background: linear-gradient(180deg, rgba(160,0,80,0.9), rgba(70,0,35,0.95)); border-color: rgba(255,0,120,0.8); }
-        .ba:active, button:active { transform: scale(0.95); }
-        .toast { position: fixed; left: 50%; bottom: 20px; transform: translate(-50%, 20px) scale(0.9); background: rgba(3, 15, 35, 0.98); border: 2px solid #00e1ff; border-radius: 30px; padding: 10px 22px; color: #fff; font-size: 13px; font-weight: 900; opacity: 0; transition: 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; z-index: 999; box-shadow: 0 5px 20px rgba(0,225,255,0.4); }
-        .toast.s { opacity: 1; transform: translate(-50%, 0) scale(1); }
-        .afb { position: fixed; bottom: 15px; right: 15px; background: rgba(0,60,150,0.95); border: 2px solid #00e1ff; color: #fff; padding: 10px 18px; border-radius: 30px; font-weight: 900; font-size: 13px; z-index: 50; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer; }
-        .sp { width: 16px; height: 16px; border: 3px dashed #00e1ff; border-radius: 50%; animation: s 4s linear infinite; display: inline-block; }
-        .sp.f { border-style: solid; border-right-color: transparent; animation: s .8s linear infinite; }
-        @keyframes s { 100% { transform: rotate(360deg); } }
-    </style>
-
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue, get } from "https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyAA0Mp45_0BnRmh4FD1M9F5PZWij8WAJ7E",
-            authDomain: "nine-991.firebaseapp.com",
-            databaseURL: "https://nine-991-default-rtdb.asia-southeast1.firebasedatabase.app",
-            projectId: "nine-991",
-            storageBucket: "nine-991.appspot.com",
-            messagingSenderId: "168686332846",
-            appId: "1:168686332846:web:db66bb7c0c91fd1edd763f",
-            measurementId: "G-JLC1CLLVQN"
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        window.dbRef = ref(db, 'extractions');
-        window.pushData = push;
-        window.onValueData = onValue;
-    </script>
-</head>
-<body class="bg-[#070d1a] text-white min-h-screen flex flex-col items-center pb-12">
-
-<!-- MODAL LOGIN (รหัส 1212) -->
-<div id="modal-login" style="position:fixed;inset:0;background:rgba(2,8,20,0.98);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;">
-  <div class="glass" style="border-radius:24px;padding:25px;width:100%;max-width:350px;text-align:center;box-shadow:0 0 35px rgba(0,225,255,0.3)">
-    <div style="font-size:35px;margin-bottom:10px">🔒</div>
-    <h3 style="color:#fff;margin:0 0 8px;font-size:20px;font-weight:900;">เข้าสู่ระบบ NINE HUB</h3>
-    <p style="color:#8ab4f8;font-size:12px;margin-bottom:18px;font-weight:700;">กรุณากรอกรหัสผ่านเพื่อเข้าใช้งาน</p>
-    <input type="password" id="login-pin" placeholder="รหัสผ่าน" autocomplete="off" inputmode="numeric" style="width:100%;background:#010612;border:1px solid rgba(0,136,204,0.6);border-radius:12px;padding:12px;color:#fff;font-size:16px;text-align:center;letter-spacing:0.3em;outline:none;margin-bottom:15px;font-weight:900;">
-    <button onclick="verifyLogin()" style="width:100%;background:linear-gradient(180deg,#0050b4,#001e50);border:1px solid #00e1ff;border-radius:12px;padding:11px;color:#fff;font-weight:900;font-size:14px;cursor:pointer;">เข้าสู่ระบบ</button>
-  </div>
-</div>
-
-<script>
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('keydown', e => {
-    if(e.keyCode===123 || (e.ctrlKey && e.shiftKey && (e.keyCode===73 || e.keyCode===74 || e.keyCode===67)) || (e.ctrlKey && e.keyCode===85)){
-        e.preventDefault();
-    }
-});
-
-function verifyLogin() {
-  const pin = document.getElementById('login-pin').value.trim();
-  if(btoa(pin) === "MTIxMg==") {
-    document.getElementById('modal-login').style.display = 'none';
-    showToast('✨ เข้าสู่ระบบสำเร็จ!');
-  } else {
-    alert("❌ รหัสผ่านไม่ถูกต้อง!");
-    document.getElementById('login-pin').value = "";
-    document.getElementById('login-pin').focus();
-  }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>NINE HUB | EXTRACTOR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600;700&family=Press+Start+2P&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg1:#030817;--bg2:#0a1836;--bg3:#18397a;
+  --card:linear-gradient(160deg,rgba(24,46,92,.88),rgba(8,17,40,.94));
+  --line:rgba(125,211,252,.35);
+  --sky:#7dd3fc;--sky2:#38bdf8;--deep:#0369a1;
+  --txt:#e6f4ff;--muted:#9bbfe4;
+  --ok:#6ee7b7;--bad:#fda4af;
+  --pix:'Press Start 2P',monospace;
+  --mono:'JetBrains Mono',monospace;
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --R:min(76vh,84vw);
 }
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Mitr',sans-serif;font-weight:500;color:var(--txt);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:22px 14px 130px;overflow-x:hidden;-webkit-font-smoothing:antialiased;
+  background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%);
+  background-attachment:fixed;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+textarea,input{font-family:inherit}
 
-window.addEventListener('DOMContentLoaded', () => {
-  const pinInput = document.getElementById('login-pin');
-  if(pinInput) pinInput.focus();
-  if(document.getElementById('inputUrl')) document.getElementById('inputUrl').value = '';
-  if(document.getElementById('outputLua')) document.getElementById('outputLua').value = '';
+/* ---------- ฉาก: ดาว เมฆ พระอาทิตย์ พื้น ---------- */
+.star{position:fixed;width:3px;height:3px;background:#fff;box-shadow:0 0 8px #bae6fd;z-index:0;pointer-events:none;animation:tw 3s ease-in-out infinite}
+.cloud{position:fixed;left:0;width:110px;height:34px;z-index:0;pointer-events:none;border-radius:999px;background:rgba(186,230,253,.16);box-shadow:inset 0 2px 0 rgba(255,255,255,.12),0 0 24px rgba(125,211,252,.12);animation:drift linear infinite}
+.cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
+.cloud::before{width:46px;height:46px;left:18px;top:-22px}
+.cloud::after{width:34px;height:34px;left:54px;top:-14px}
+.orbit{position:fixed;left:50%;bottom:0;width:0;height:0;z-index:0;pointer-events:none;transform-origin:0 0;animation:orbit 80s ease-in-out infinite alternate}
+.sun{position:absolute;left:-46px;bottom:calc(var(--R) - 46px);width:92px;height:92px}
+.sun::before{content:"";position:absolute;inset:-70px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.35),rgba(251,146,60,.1) 45%,transparent 70%);animation:glow 4s ease-in-out infinite}
+.sun i{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffbeb,#fde68a 40%,#fbbf24 75%,#f59e0b);box-shadow:0 0 28px 6px rgba(253,224,71,.5),0 0 90px 24px rgba(251,146,60,.3);animation:glow 4s ease-in-out infinite}
+.ground{position:fixed;left:0;right:0;bottom:0;height:40px;z-index:0;pointer-events:none;border-top:3px solid #06130b;background:linear-gradient(180deg,#2f7a3c 0 8px,#1f5a2b 8px 14px,#6b4226 14px 18px,#4a2d19 18px 100%)}
+
+/* ---------- ปุ่ม ---------- */
+.btn{
+  position:relative;overflow:hidden;z-index:1;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 16px;font-size:14px;font-weight:600;color:var(--txt);white-space:nowrap;user-select:none;
+  background:linear-gradient(180deg,#24487f,#12285a);
+  border:2px solid var(--sky);border-radius:14px;
+  box-shadow:0 5px 0 #050c22,0 8px 18px -6px rgba(56,189,248,.45),inset 0 1px 0 rgba(255,255,255,.18);
+  transition:transform .25s var(--spring),box-shadow .2s,filter .2s;
+}
+.btn::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none}
+.btn:hover{transform:translateY(-3px);filter:brightness(1.12);box-shadow:0 8px 0 #050c22,0 12px 26px -6px rgba(56,189,248,.7),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn:hover::after{left:120%}
+.btn:active{transform:translateY(4px) scale(.93);box-shadow:0 1px 0 #050c22,inset 0 2px 6px rgba(0,0,0,.35);transition-duration:.05s}
+.btn.pri{background:linear-gradient(180deg,#38bdf8,#0ea5e9 50%,#0369a1);border-color:#e0f2fe;color:#fff;text-shadow:0 2px 0 rgba(3,30,60,.5)}
+.btn.warn{background:linear-gradient(180deg,#4c1d3a,#2a0f22);border-color:var(--bad);color:#ffe4e6}
+.btn.sm{padding:8px 14px;font-size:12.5px;border-radius:12px}
+.btn.block{width:100%}
+.btn-row .btn{white-space:normal;line-height:1.3}
+.afb{position:fixed;right:16px;bottom:18px;z-index:50}
+
+/* ---------- การ์ด ---------- */
+.wrap{width:100%;max-width:560px;position:relative;z-index:1}
+.panel{position:relative;background:var(--card);border:2px solid var(--line);border-radius:26px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 24px 50px -20px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.08)}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:nowrap;padding:10px 12px;margin-bottom:30px;border-radius:999px;animation:rise .6s ease both}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo-mini{width:42px;height:42px;flex-shrink:0;display:grid;place-items:center;border-radius:14px;font-family:var(--pix);font-size:9px;color:#fff;background:linear-gradient(135deg,#7dd3fc,#0ea5e9 55%,#0369a1);border:2px solid #e0f2fe;box-shadow:0 0 18px rgba(56,189,248,.5);animation:wobble 5s ease-in-out infinite}
+.brand h1{font-family:var(--pix);font-size:9.5px;line-height:1.7;font-weight:400;white-space:nowrap}
+.brand p{font-size:11px;color:var(--muted);white-space:nowrap}
+.actions{display:flex;gap:8px;flex-shrink:0}
+
+/* ---------- Hero ---------- */
+.hero{text-align:center;margin-bottom:30px;animation:rise .8s ease both}
+.gem{position:relative;width:104px;height:104px;margin:0 auto 22px;display:grid;place-items:center;border-radius:32px;border:3px solid #e0f2fe;background:linear-gradient(135deg,#bae6fd,#38bdf8 40%,#0369a1 80%,#075985);box-shadow:0 0 0 6px rgba(56,189,248,.12),0 0 50px rgba(56,189,248,.5),inset 0 2px 0 rgba(255,255,255,.4);transform-origin:50% 90%;animation:wobble 4.5s ease-in-out infinite,halo 3s ease-in-out infinite}
+.gem span{font-family:var(--pix);font-size:13px;color:#fff;text-shadow:3px 3px 0 #075985}
+.gem.lg{width:124px;height:124px;border-radius:38px;margin-bottom:0}
+.gem.lg span{font-size:16px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:18px;border-radius:999px;border:2px solid var(--line);background:rgba(56,189,248,.1);font-size:12.5px;font-weight:600;color:#bae6fd}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);animation:blink 1.4s ease-in-out infinite}
+.hero h2{font-size:clamp(26px,6vw,34px);font-weight:700;line-height:1.4;margin-bottom:14px}
+.grad{display:inline-block;margin-top:10px;font-family:var(--pix);font-size:.55em;line-height:1.9;background:linear-gradient(90deg,#7dd3fc,#38bdf8,#e0f2fe,#38bdf8,#7dd3fc);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
+.hero .sub{font-size:13.5px;line-height:1.85;color:var(--muted);max-width:420px;margin:0 auto 20px}
+
+/* ---------- Stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;animation:rise .9s ease both}
+.stat{padding:18px 8px;text-align:center;border-radius:22px;transition:transform .3s var(--spring)}
+.stat:hover{transform:translateY(-4px) rotate(-1.5deg)}
+.stat b{display:block;font-family:var(--pix);font-size:15px;line-height:1.4;font-weight:400;color:var(--sky)}
+.stat small{display:block;margin-top:10px;font-size:12px;color:var(--muted)}
+.stat.ok b{color:var(--ok)}
+.stat.bad b{color:var(--bad)}
+#s-time{font-family:var(--mono);font-size:13px;font-weight:700}
+.pop{animation:pop .4s var(--spring)}
+
+/* ---------- Editor ---------- */
+.card{padding:24px;border-radius:26px;animation:rise 1s ease both}
+.label{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}
+.label span{font-family:var(--pix);font-size:9px;line-height:1.7;color:var(--sky)}
+.fld{width:100%;height:150px;resize:vertical;outline:none;padding:14px;border-radius:18px;background:rgba(2,8,22,.7);color:#e0f2fe;border:2px solid rgba(125,211,252,.25);font-family:var(--mono);font-size:12.5px;font-weight:500;line-height:1.6;transition:border-color .25s,box-shadow .25s}
+.fld::placeholder{color:#4f7aa6;font-family:'Mitr',sans-serif}
+.fld:focus{border-color:var(--sky);box-shadow:0 0 0 4px rgba(56,189,248,.18),0 0 26px rgba(56,189,248,.25)}
+.fld[readonly]{color:var(--ok)}
+.fld.out{height:200px;margin-bottom:20px}
+.fld.sm{height:110px}
+.statusbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 16px;margin:16px 0 24px;border-radius:16px;background:rgba(56,189,248,.08);border:2px solid rgba(125,211,252,.25)}
+.status-l{display:flex;align-items:center;gap:10px;min-width:0}
+#status{font-size:13px;font-weight:600;color:#bae6fd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lineCount{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--muted);white-space:nowrap}
+.sp{width:12px;height:12px;flex-shrink:0;border-radius:50%;background:var(--sky2);box-shadow:0 0 10px var(--sky2)}
+.sp.f{background:transparent;border:3px solid var(--sky);border-right-color:transparent;box-shadow:none;animation:spin .8s linear infinite}
+.btn-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+/* ---------- Dialog ---------- */
+.overlay{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,6,18,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.overlay.on{display:flex}
+.dialog{width:100%;max-width:360px;padding:30px 26px 26px;text-align:center;animation:rise .45s var(--spring) both}
+.dialog.wide{max-width:540px;text-align:left}
+.dialog h3{font-size:18px;font-weight:700;margin-bottom:6px;color:#f0f9ff}
+.dialog.wide h3::before{content:"◆ ";color:var(--sky2)}
+.dialog > p{font-size:13px;color:var(--muted);margin-bottom:22px}
+.lbl{display:block;font-family:var(--pix);font-size:8px;color:var(--sky);margin:16px 0 10px}
+.lock{width:68px;height:68px;margin:0 auto 18px;display:grid;place-items:center;font-size:28px;border-radius:22px;background:linear-gradient(160deg,rgba(56,189,248,.28),rgba(3,105,161,.18));border:2px solid var(--sky);box-shadow:0 0 24px rgba(56,189,248,.35);animation:float 3s ease-in-out infinite}
+.input{width:100%;padding:14px;margin-bottom:16px;outline:none;text-align:center;font-family:'Mitr',sans-serif;font-size:18px;font-weight:600;letter-spacing:6px;color:#f0f9ff;border-radius:16px;background:rgba(2,8,22,.7);border:2px solid rgba(125,211,252,.3);transition:border-color .25s,box-shadow .25s}
+.input:focus{border-color:var(--sky);box-shadow:0 0 0 4px rgba(56,189,248,.2)}
+.dlg-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dlg-foot{text-align:right;margin-top:18px}
+.shake{animation:shake .45s steps(6) both}
+
+/* ---------- Splash ---------- */
+.splash{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;cursor:pointer;background:radial-gradient(circle at 50% 40%,rgba(24,57,122,.7),rgba(3,8,23,.97) 70%);transition:opacity .55s,transform .55s}
+.splash.out{opacity:0;transform:scale(1.05);pointer-events:none}
+.splash-in{text-align:center;animation:rise .9s var(--spring) both}
+.sp-title{margin-top:30px;font-family:var(--pix);font-size:19px;font-weight:400;line-height:1.6;color:#f0f9ff;text-shadow:4px 4px 0 #075985,0 0 30px rgba(56,189,248,.6)}
+.sp-sub{margin-top:14px;font-size:12px;font-weight:600;letter-spacing:4px;color:var(--sky)}
+.press{margin-top:50px;display:grid;gap:12px;justify-items:center}
+.press-en{font-family:var(--pix);font-size:11px;color:#e0f2fe;animation:blink 1s steps(1,end) infinite}
+.press-th{font-size:14px;font-weight:600;color:var(--muted)}
+
+/* ---------- Admin ---------- */
+#ap{display:none;position:fixed;inset:0;z-index:100;overflow-y:auto;padding:26px 16px 110px;background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 55%,var(--bg3) 100%)}
+#ap.on{display:block}
+.adm{max-width:880px;margin:0 auto}
+.adm-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.adm-head h1{font-size:17px;font-weight:700;line-height:1.7}
+.adm-head h1 span{font-family:var(--pix);font-size:11px;font-weight:400;vertical-align:middle}
+.adm-head small{font-size:13px;color:var(--muted)}
+.tbl{padding:14px;overflow-x:auto;border-radius:26px}
+table{width:100%;border-collapse:collapse;min-width:460px}
+thead th{padding:12px 10px;text-align:left;font-size:13px;font-weight:600;color:var(--sky);border-bottom:2px solid var(--line)}
+tbody td{padding:12px 10px;font-size:13.5px;border-bottom:1px solid rgba(125,211,252,.1);transition:background .2s}
+tbody tr:hover td{background:rgba(56,189,248,.08)}
+td.empty{text-align:center;padding:26px;color:var(--muted)}
+.badge{display:inline-block;padding:4px 12px;font-size:12px;font-weight:600;border-radius:999px;border:1.5px solid}
+.badge.ok{color:var(--ok);background:rgba(110,231,183,.12);border-color:rgba(110,231,183,.45);animation:pulse 2.4s ease-in-out infinite}
+.badge.bad{color:var(--bad);background:rgba(251,113,133,.12);border-color:rgba(251,113,133,.45)}
+
+/* ---------- Toast & อนุภาค ---------- */
+.toast{position:fixed;left:50%;bottom:84px;z-index:999;width:max-content;max-width:88vw;text-align:center;padding:12px 22px;border-radius:999px;font-size:13.5px;font-weight:600;color:#f0f9ff;background:rgba(7,20,46,.95);border:2px solid var(--sky);box-shadow:0 0 24px rgba(56,189,248,.45),0 14px 30px -10px rgba(0,0,0,.7);transform:translate(-50%,30px) scale(.8);opacity:0;pointer-events:none;transition:all .45s var(--spring)}
+.toast.s{opacity:1;transform:translate(-50%,0) scale(1)}
+.pt{position:fixed;width:7px;height:7px;border-radius:2px;pointer-events:none;z-index:9999}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{50%{opacity:.25}}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes float{50%{transform:translateY(-6px)}}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+@keyframes drift{from{transform:translateX(-160px)}to{transform:translateX(calc(100vw + 160px))}}
+@keyframes orbit{from{transform:rotate(-36deg)}to{transform:rotate(36deg)}}
+@keyframes glow{50%{transform:scale(1.08);opacity:.85}}
+@keyframes tw{50%{opacity:.2}}
+@keyframes wobble{0%,30%,100%{transform:rotate(0)}6%{transform:rotate(-7deg)}12%{transform:rotate(6deg)}18%{transform:rotate(-4deg)}24%{transform:rotate(2deg)}}
+@keyframes halo{50%{box-shadow:0 0 0 10px rgba(56,189,248,.05),0 0 70px rgba(56,189,248,.7),inset 0 2px 0 rgba(255,255,255,.4)}}
+@keyframes shine{to{background-position:200% center}}
+@keyframes pop{from{transform:scale(.6)}to{transform:scale(1)}}
+@keyframes pulse{50%{box-shadow:0 0 14px rgba(110,231,183,.5)}}
+
+@media (max-width:420px){
+  .bt{display:none}
+  .btn.sm{padding:8px 11px}
+  .stats{gap:10px}
+  .stat b{font-size:12px}
+  #s-time{font-size:11px}
+  .card{padding:18px}
+  .btn-row .btn{font-size:12px;padding:12px 4px}
+  .gem{width:92px;height:92px}
+}
+</style>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
+import{getDatabase,ref,push,set,onValue,runTransaction}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+import{getAuth,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-auth.js";
+const app=initializeApp({
+  apiKey:"YOUR_API_KEY",
+  authDomain:"nine-991.firebaseapp.com",
+  projectId:"nine-991",
+  databaseURL:"https://nine-991-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
+window.FB={db:getDatabase(app),auth:getAuth(app),ref,push,set,onValue,runTransaction,signIn:signInWithEmailAndPassword,signOut};
 </script>
+</head>
+<body>
 
-<!-- UI หลัก -->
-<div id="mUI" style="width:100%;max-width:500px;display:flex;flex-direction:column;align-items:center;padding:15px;">
-  
-  <!-- HERO SECTION -->
-  <div id="hero-section" class="w-full animate-fade-in">
-    <!-- Top Bar Navbar -->
-    <div class="max-w-2xl mx-auto px-4 pt-4">
-      <div class="glass rounded-[2rem] p-3 flex justify-between items-center mb-10 shadow-lg shadow-blue-900/20">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-full bg-blue-900/50 border border-cyan-400/50 flex items-center justify-center overflow-hidden shadow-[0_0_10px_rgba(34,211,238,0.3)]">
-            <span class="text-cyan-300 font-bold text-sm">NS</span>
-          </div>
-          <div>
-            <h1 class="text-white font-bold text-sm leading-tight">NINE SCRIPTS</h1>
-            <p class="text-[10px] text-blue-300/70">ศูนย์รวมสคริปต์</p>
-          </div>
-        </div>
-        <div class="flex gap-2">
-          <button onclick="location.reload()" class="glass px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1 hover:bg-blue-900/50 transition-colors text-blue-200">↻ รีเฟรช</button>
-          <a href="https://discord.gg/enq9Cy4nwa" target="_blank" class="glass px-3 py-1.5 rounded-xl text-xs font-medium flex items-center gap-1 bg-blue-600/20 hover:bg-blue-500/30 text-cyan-300 transition-colors border-cyan-500/30">Discord ↗</a>
-        </div>
-      </div>
-    </div>
+<!-- ฉาก -->
+<i class="star" style="top:8%;left:12%"></i>
+<i class="star" style="top:14%;left:78%;animation-delay:1s"></i>
+<i class="star" style="top:24%;left:40%;animation-delay:2s"></i>
+<i class="star" style="top:6%;left:58%;animation-delay:.5s"></i>
+<i class="star" style="top:34%;left:88%;animation-delay:1.6s"></i>
+<i class="star" style="top:44%;left:8%;animation-delay:2.4s"></i>
+<i class="star" style="top:18%;left:28%;animation-delay:.8s"></i>
+<i class="star" style="top:52%;left:70%;animation-delay:3s"></i>
+<div class="cloud" style="top:12%;animation-duration:80s;animation-delay:-20s"></div>
+<div class="cloud" style="top:28%;animation-duration:110s;animation-delay:-60s;opacity:.7"></div>
+<div class="cloud" style="top:40%;animation-duration:95s;animation-delay:-5s;opacity:.5"></div>
+<div class="orbit" aria-hidden="true"><div class="sun"><i></i></div></div>
+<div class="ground" aria-hidden="true"></div>
 
-    <!-- Main Banner & Title Section -->
-    <div class="max-w-2xl mx-auto flex flex-col items-center text-center px-4 mb-8">
-      <div class="w-24 h-24 rounded-full bg-[#0B1221] border border-cyan-400 p-1 shadow-[0_0_20px_rgba(34,211,238,0.4)] mb-5 flex items-center justify-center">
-        <span class="text-cyan-300 font-bold text-xl tracking-wider">NINE</span>
-      </div>
-      <div class="glass px-4 py-1.5 rounded-full text-xs font-medium text-cyan-300 mb-5 flex items-center gap-2 border-cyan-500/30">
-        <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]"></span> สคริปต์พร้อมใช้งาน
-      </div>
-      <h2 class="text-4xl md:text-5xl font-bold text-white mb-3 tracking-tight">ค้นหา แล้วเริ่มใช้<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-[0_0_15px_rgba(34,211,238,0.3)]">NINE SCRIPTS</span></h2>
-      <p class="text-blue-200/70 text-sm md:text-base max-w-md mx-auto mb-6 leading-relaxed">รวมสคริปต์ไว้ในที่เดียว ค้นหาชื่อหรือแมพที่รองรับ เปิดดูรายละเอียด แล้วคัดลอกโค้ดได้ทันที</p>
-      <a href="https://discord.gg/enq9Cy4nwa" target="_blank" class="glass border-blue-500/40 hover:bg-blue-900/40 px-6 py-2.5 rounded-full text-blue-200 font-medium flex items-center gap-2 shadow-lg shadow-blue-900/20 transition-all hover:scale-105 active:scale-95 text-sm">พูดคุยใน Discord ↗</a>
-    </div>
-
-    <!-- 3 Stats Cards Grid -->
-    <div class="max-w-2xl mx-auto grid grid-cols-3 gap-3 px-4 mb-8">
-      <div class="glass rounded-3xl p-4 text-center flex flex-col justify-center hover:border-cyan-400/40 transition-colors shadow-inner">
-        <span id="s-success" class="text-2xl md:text-3xl font-bold text-white drop-shadow-md">0</span>
-        <span class="text-[10px] md:text-xs text-blue-300/70 mt-1">แกะสำเร็จ</span>
-      </div>
-      <div class="glass rounded-3xl p-4 text-center flex flex-col justify-center hover:border-cyan-400/40 transition-colors shadow-inner">
-        <span id="s-failed" class="text-2xl md:text-3xl font-bold text-white drop-shadow-md">0</span>
-        <span class="text-[10px] md:text-xs text-blue-300/70 mt-1">แกะไม่สำเร็จ</span>
-      </div>
-      <div class="glass rounded-3xl p-4 text-center flex flex-col justify-center hover:border-cyan-400/40 transition-colors shadow-inner">
-        <span id="s-time" class="text-xl md:text-3xl font-bold text-white drop-shadow-md">-</span>
-        <span class="text-[10px] md:text-xs text-blue-300/70 mt-1">อัปเดตล่าสุด</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Extractor Panel -->
-  <div class="glass w-full rounded-3xl p-5 shadow-2xl">
-    <div class="flex justify-between items-center mb-2">
-      <span class="text-xs font-black text-cyan-300">// PASTE URL HERE //</span>
-      <button onclick="navigator.clipboard.readText().then(t => { document.getElementById('inputUrl').value = t.trim(); fetchScript(); })" class="glass px-3 py-1 rounded-xl text-xs font-black text-cyan-300 cursor-pointer">📋 วางข้อความ</button>
-    </div>
-    <textarea class="fld mb-3" id="inputUrl" autocomplete="off" placeholder="วางลิงก์ loadstring() หรือ URL ที่นี่..." oninput="fetchScript()"></textarea>
-    
-    <div class="flex justify-between items-center bg-black/40 border border-cyan-500/30 rounded-2xl px-4 py-2 mb-3">
-      <div class="flex gap-2 items-center"><div class="sp" id="sp"></div><span style="font-size:12px;color:#00e1ff;font-weight:900" id="status">สถานะ: รอการวางลิงก์</span></div>
-      <span class="text-xs text-blue-200 font-black" id="lineCount">0 LINES</span>
-    </div>
-
-    <div class="flex justify-between items-center mb-2">
-      <span class="text-xs font-black text-cyan-300">// EXTRACTED LUA CODE //</span>
-    </div>
-    <textarea class="fld mb-4" id="outputLua" readonly autocomplete="off" placeholder="-- โค้ด Lua จะแสดงที่นี่..."></textarea>
-    
-    <div class="grid grid-cols-3 gap-2">
-        <button class="ba" onclick="navigator.clipboard.writeText(finalCode); playSnd('copy'); showToast('📋 คัดลอกโค้ดแล้ว!');">คัดลอก</button>
-        <button class="ba" onclick="downloadCode()">ดาวโหลด</button>
-        <button class="ba d" onclick="clearAll()">ล้าง</button>
+<!-- SPLASH -->
+<div id="splash" class="splash" role="button" tabindex="0" aria-label="เริ่มต้น">
+  <div class="splash-in">
+    <div class="gem lg"><span>NINE</span></div>
+    <h1 class="sp-title">NINE SCRIPTS</h1>
+    <p class="sp-sub">EXTRACTOR</p>
+    <div class="press">
+      <span class="press-en">PRESS START</span>
+      <span class="press-th">กดที่หน้าจอเพื่อเริ่มต้น</span>
     </div>
   </div>
 </div>
 
-<!-- ปุ่มหลังบ้าน -->
-<button class="afb" id="gab">⚙️ หลังบ้าน</button>
+<!-- LOGIN -->
+<div id="modal-login" class="overlay">
+  <div id="login-box" class="panel dialog">
+    <div class="lock">🔐</div>
+    <h3>เข้าสู่ระบบ NINE HUB</h3>
+    <p>กรุณากรอกรหัสผ่านเพื่อเข้าใช้งาน</p>
+    <input class="input" type="password" id="login-pin" placeholder="••••" autocomplete="off" inputmode="numeric">
+    <button class="btn pri block" onclick="verifyLogin()">เข้าสู่ระบบ</button>
+  </div>
+</div>
 
-<!-- หน้าหลังบ้าน -->
-<div id="ap" style="display:none;position:fixed;inset:0;background:#070d1a;z-index:100;overflow-y:auto;padding:20px;">
-  <div style="max-width:800px;margin:0 auto;">
-    <div style="display:flex;justify-content:space-between;border-bottom:2px solid #00e1ff;padding-bottom:12px;margin-bottom:20px;align-items:center;">
-      <div><h1 style="margin:0;font-size:22px;font-weight:900;color:#fff;">NINE HUB | หลังบ้าน</h1><span style="font-size:12px;color:#00e1ff;font-weight:700;">ประวัติการใช้งานระบบทั้งหมด</span></div>
-      <div><button class="glass" style="background:#a00050;padding:8px 16px;border-radius:12px;font-weight:900;cursor:pointer;color:#fff;" onclick="eA()">🔙 กลับหน้าหลัก</button></div>
+<!-- MAIN -->
+<div id="mUI" class="wrap">
+  <header class="panel topbar">
+    <div class="brand">
+      <div class="logo-mini">NS</div>
+      <div class="bt">
+        <h1>NINE SCRIPTS</h1>
+        <p>ศูนย์รวมสคริปต์</p>
+      </div>
     </div>
-    <div class="glass" style="border-radius:16px;padding:15px;overflow-x:auto;">
-      <table style="width:100%;border-collapse:collapse;min-width:450px;">
+    <div class="actions">
+      <button class="btn sm" onclick="location.reload()">↻ รีเฟรช</button>
+      <a class="btn sm" href="https://discord.gg/enq9Cy4nwa" target="_blank" rel="noopener">Discord ↗</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="gem"><span>NINE</span></div>
+    <div class="pill"><i class="dot"></i>สคริปต์พร้อมใช้งาน</div>
+    <h2>ค้นหา แล้วเริ่มใช้<br><span class="grad">NINE SCRIPTS</span></h2>
+    <p class="sub">รวมสคริปต์ไว้ในที่เดียว วางลิงก์หรือโค้ด แล้วคัดลอกผลลัพธ์ได้ทันที</p>
+    <a class="btn sm" href="https://discord.gg/enq9Cy4nwa" target="_blank" rel="noopener">พูดคุยใน Discord ↗</a>
+  </section>
+
+  <section class="stats">
+    <div class="panel stat ok"><b id="s-success">0</b><small>แกะสำเร็จ</small></div>
+    <div class="panel stat bad"><b id="s-failed">0</b><small>แกะไม่สำเร็จ</small></div>
+    <div class="panel stat"><b id="s-time">-</b><small>อัปเดตล่าสุด</small></div>
+  </section>
+
+  <main class="panel card">
+    <div class="label">
+      <span>// PASTE URL HERE</span>
+      <button class="btn sm" onclick="pasteFromClipboard()">📋 วางข้อความ</button>
+    </div>
+    <textarea class="fld" id="inputUrl" autocomplete="off" placeholder="วางลิงก์ loadstring() หรือวางโค้ด Lua ที่นี่..." oninput="fetchScript()"></textarea>
+
+    <div class="statusbar">
+      <div class="status-l">
+        <div class="sp" id="sp"></div>
+        <span id="status">สถานะ: รอการวางลิงก์</span>
+      </div>
+      <span id="lineCount">0 LINES</span>
+    </div>
+
+    <div class="label"><span>// EXTRACTED LUA CODE</span></div>
+    <textarea class="fld out" id="outputLua" readonly placeholder="-- โค้ด Lua จะแสดงที่นี่..."></textarea>
+
+    <div class="btn-row">
+      <button class="btn pri" onclick="copyCode()">คัดลอก</button>
+      <button class="btn" onclick="downloadCode()">ดาวน์โหลด</button>
+      <button class="btn warn" onclick="clearAll()">ล้าง</button>
+    </div>
+  </main>
+</div>
+
+<button class="btn sm afb" id="gab" onclick="openAdmin()">⚙️ หลังบ้าน</button>
+
+<!-- ADMIN UNLOCK -->
+<div id="modal-admin" class="overlay">
+  <div id="admin-box" class="panel dialog">
+    <div class="lock">⚙️</div>
+    <h3>หลังบ้าน</h3>
+    <p>กรอกรหัสผ่านผู้ดูแลระบบ</p>
+    <input class="input" type="password" id="admin-pin" placeholder="••••••" autocomplete="off">
+    <div class="dlg-btns">
+      <button class="btn" onclick="closeAdminUnlock()">ยกเลิก</button>
+      <button class="btn pri" onclick="unlockAdmin()">เข้าสู่ระบบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="ap">
+  <div class="adm">
+    <div class="adm-head">
+      <div>
+        <h1><span>NINE HUB</span> | หลังบ้าน</h1>
+        <small>ประวัติการใช้งานระบบทั้งหมด</small>
+      </div>
+      <button class="btn pri sm" onclick="eA()">🔙 กลับหน้าหลัก</button>
+    </div>
+    <div class="panel tbl">
+      <table>
         <thead>
-          <tr style="color:#00e1ff;font-weight:900;font-size:13px;border-bottom:1px solid rgba(0,68,170,0.4);">
-            <th style="padding:10px;text-align:left;">#</th>
-            <th style="padding:10px;text-align:left;">เวลา</th>
-            <th style="padding:10px;text-align:left;">อุปกรณ์</th>
-            <th style="padding:10px;text-align:left;">สถานะ</th>
-            <th style="padding:10px;text-align:left;">ดู</th>
-          </tr>
+          <tr><th>#</th><th>เวลา</th><th>อุปกรณ์</th><th>สถานะ</th><th>ดู</th></tr>
         </thead>
-        <tbody id="atbd" style="font-weight:700;font-size:13px;"></tbody>
+        <tbody id="atbd"></tbody>
       </table>
     </div>
   </div>
 </div>
 
-<!-- Modal ดูรายละเอียด -->
-<div id="dm" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;align-items:center;justify-content:center;padding:15px;">
-  <div class="glass" style="border-radius:16px;width:100%;max-width:500px;padding:20px;box-shadow:0 0 25px rgba(0,225,255,0.3);">
-    <h3 style="margin-top:0;color:#00e1ff;font-weight:900;">รายละเอียดการใช้งาน</h3>
-    <strong style="color:#fff;font-size:12px;font-weight:900;">ต้นฉบับ:</strong><textarea id="mb" readonly style="width:100%;height:100px;background:#010612;color:#fff;border:1px solid rgba(0,68,170,0.6);padding:8px;margin-bottom:10px;font-family:monospace;border-radius:8px;font-weight:700;"></textarea>
-    <strong style="color:#fff;font-size:12px;font-weight:900;">ผลลัพธ์:</strong><textarea id="ma" readonly style="width:100%;height:100px;background:#010612;color:#0f0;border:1px solid rgba(0,68,170,0.6);padding:8px;margin-bottom:10px;font-family:monospace;border-radius:8px;font-weight:700;"></textarea>
-    <div style="text-align:right"><button class="ba d" style="padding:6px 18px;font-size:12px;" onclick="document.getElementById('dm').style.display='none'">ปิด</button></div>
+<!-- DETAIL -->
+<div id="dm" class="overlay">
+  <div class="panel dialog wide">
+    <h3>รายละเอียดการใช้งาน</h3>
+    <span class="lbl">ต้นฉบับ</span>
+    <textarea id="mb" class="fld sm" readonly></textarea>
+    <span class="lbl">ผลลัพธ์</span>
+    <textarea id="ma" class="fld sm" readonly></textarea>
+    <div class="dlg-foot">
+      <button class="btn warn sm" onclick="closeDetail()">ปิด</button>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="t"></div>
 
-<!-- โค้ดระบบเสียง + สั่น + ระบบ Worker ตัวจริงของพี่ Nine + Firebase Sync -->
 <script>
-    let aCtx;
-    const playSnd = (type) => {
-      try {
-        if (!aCtx) aCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (aCtx.state === 'suspended') aCtx.resume();
-        const osc = aCtx.createOscillator();
-        const gain = aCtx.createGain();
-        const now = aCtx.currentTime;
-        osc.connect(gain);
-        gain.connect(aCtx.destination);
-        if (type === 'click') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(600, now);
-          osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
-          gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-          osc.start(now); osc.stop(now + 0.1);
-        } else if (type === 'copy') {
-          osc.type = 'sine'; osc.frequency.setValueAtTime(800, now);
-          osc.frequency.setValueAtTime(1200, now + 0.1);
-          gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
-          osc.start(now); osc.stop(now + 0.3);
-        }
-      } catch (e) {}
-    };
-    const vb = (p) => { if (navigator.vibrate) navigator.vibrate(p); };
+/* ---------- กันการดูซอส (เป็นแค่การขัดขวาง) ---------- */
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase(),c=e.ctrlKey||e.metaKey;
+  if(e.key==='F12'||(c&&(k==='u'||k==='s'||k==='p'||(e.shiftKey&&(k==='i'||k==='j'||k==='c'))))){
+    e.preventDefault();e.stopPropagation();
+    showToast('🚫 ปิดการใช้งานทางลัดนี้');
+    return;
+  }
+  if(!started&&(e.key==='Enter'||e.key===' ')){e.preventDefault();startApp();}
+  if(e.key==='Escape'){hideOverlay('dm');hideOverlay('modal-admin');}
+},true);
+// กันเว็บอื่นฝังหน้านี้ใน iframe
+if(top!==self){document.documentElement.style.display='none';try{top.location=self.location}catch(_){}}
 
-    document.addEventListener('click', (e) => {
-      if (e.target.closest('button') || e.target.closest('a')) {
-        playSnd('click'); vb(15);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const gd=()=>/Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(navigator.userAgent)?'iOS':'PC';
+const LOGIN_HASH='MTIxMg==';
+const ADMIN_EMAIL='YOUR_ADMIN_EMAIL@example.com';
+
+/* ---------- เสียงแบบ Minecraft (สร้างในเบราว์เซอร์ ไม่ต้องโหลดไฟล์) ---------- */
+let AC=null,NB=null;
+const ctx=()=>{
+  if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==='suspended')AC.resume();
+  return AC;
+};
+const noise=()=>{
+  if(NB)return NB;
+  const c=ctx();NB=c.createBuffer(1,c.sampleRate*.25,c.sampleRate);
+  const d=NB.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+  return NB;
+};
+const tone=(f1,f2,t,dur,vol,type='triangle')=>{
+  const c=ctx(),o=c.createOscillator(),g=c.createGain();
+  o.type=type;
+  o.frequency.setValueAtTime(f1,t);
+  o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  g.gain.setValueAtTime(vol,t);
+  g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  o.connect(g).connect(c.destination);
+  o.start(t);o.stop(t+dur+.02);
+};
+const SFX={
+  hit(p=1){ // ทุบบล็อก: คลิ๊กแหลม + ตุ้บต่ำ
+    const c=ctx(),t=c.currentTime,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
+    s.buffer=noise();s.playbackRate.value=p;
+    f.type='bandpass';f.frequency.value=1100*p;f.Q.value=.9;
+    g.gain.setValueAtTime(.7,t);g.gain.exponentialRampToValueAtTime(.001,t+.14);
+    s.connect(f).connect(g).connect(c.destination);s.start(t);
+    tone(220*p,70,t,.12,.5);
+  },
+  ding(){const t=ctx().currentTime;[1047,1319,1568].forEach((f,i)=>tone(f,f,t+i*.07,.2,.18,'square'))},
+  error(){tone(170,60,ctx().currentTime,.3,.3,'sawtooth')},
+  open(){tone(520,780,ctx().currentTime,.12,.35)},
+  close(){tone(600,380,ctx().currentTime,.12,.35)},
+  start(){const t=ctx().currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,f,t+i*.09,.18,.2,'square'))},
+  clear(){tone(480,200,ctx().currentTime,.2,.3)}
+};
+
+/* ---------- เอฟเฟกต์กดปุ่ม: เสียง + อนุภาคพิกเซลกระเด็น ---------- */
+function burst(x,y,col){
+  for(let i=0;i<12;i++){
+    const p=document.createElement('i');
+    p.className='pt';
+    p.style.cssText=`left:${x}px;top:${y}px;background:${col}`;
+    document.body.appendChild(p);
+    const a=Math.random()*Math.PI*2,d=28+Math.random()*44;
+    p.animate([
+      {transform:'translate(-50%,-50%) scale(1) rotate(0deg)',opacity:1},
+      {transform:`translate(calc(-50% + ${Math.cos(a)*d}px),calc(-50% + ${Math.sin(a)*d+24}px)) scale(.2) rotate(${Math.random()*540}deg)`,opacity:0}
+    ],{duration:620,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>p.remove();
+  }
+}
+document.addEventListener('pointerdown',e=>{
+  const b=e.target.closest('button,a');
+  if(!b)return;
+  try{SFX.hit(.85+Math.random()*.35);}catch(_){}
+  burst(e.clientX,e.clientY,b.classList.contains('pri')?'#38bdf8':'#7dd3fc');
+  if(navigator.vibrate)navigator.vibrate(10);
+});
+
+/* ---------- Helpers ---------- */
+let tt=null;
+function showToast(m){
+  const t=$('t');t.textContent=m;t.classList.add('s');
+  clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('s'),2200);
+}
+const showOverlay=id=>$(id).classList.add('on');
+const hideOverlay=id=>$(id).classList.remove('on');
+function shake(id){const el=$(id);el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
+
+/* ---------- Splash ---------- */
+let started=false;
+function startApp(){
+  if(started)return;
+  started=true;
+  SFX.start();
+  $('splash').classList.add('out');
+  setTimeout(()=>{
+    $('splash').style.display='none';
+    showOverlay('modal-login');
+    setTimeout(()=>$('login-pin').focus(),60);
+  },550);
+}
+$('splash').addEventListener('click',startApp);
+
+/* ---------- Login (ด่านหน้า) ---------- */
+function verifyLogin(){
+  if(btoa($('login-pin').value.trim())===LOGIN_HASH){
+    SFX.ding();hideOverlay('modal-login');showToast('✨ เข้าสู่ระบบสำเร็จ!');
+  }else{
+    SFX.error();shake('login-box');$('login-pin').value='';$('login-pin').focus();showToast('❌ รหัสผ่านไม่ถูกต้อง');
+  }
+}
+$('login-pin').addEventListener('keydown',e=>{if(e.key==='Enter')verifyLogin();});
+
+/* ---------- สถิติ (อ่านจากตัวนับ ไม่ดึงประวัติทั้งหมด) ---------- */
+function renderStats(s){
+  const put=(id,v)=>{
+    const el=$(id);
+    if(el.textContent===String(v))return;
+    el.textContent=v;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');
+  };
+  put('s-success',s?.success||0);
+  put('s-failed',s?.failed||0);
+  put('s-time',s?.last?String(s.last).split(/[\s,]+/).pop():'-');
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  const F=window.FB;
+  if(F)F.onValue(F.ref(F.db,'stats'),snap=>renderStats(snap.val()));
+});
+
+/* ---------- Admin (ใช้ Firebase Auth ไม่มีรหัสในโค้ด) ---------- */
+let adminRows=[],unsub=null;
+function openAdmin(){SFX.open();$('admin-pin').value='';showOverlay('modal-admin');setTimeout(()=>$('admin-pin').focus(),60);}
+function closeAdminUnlock(){SFX.close();hideOverlay('modal-admin');}
+function adminFail(){
+  SFX.error();shake('admin-box');$('admin-pin').value='';$('admin-pin').focus();
+  showToast('❌ เข้าสู่ระบบไม่สำเร็จ');
+}
+async function unlockAdmin(){
+  const F=window.FB,pwd=$('admin-pin').value;
+  if(!F||!pwd)return adminFail();
+  try{await F.signIn(F.auth,ADMIN_EMAIL,pwd);}
+  catch(e){return adminFail();}
+  SFX.ding();
+  hideOverlay('modal-admin');
+  $('mUI').style.display='none';$('gab').style.display='none';
+  $('ap').classList.add('on');
+  showToast('🔓 เข้าสู่ระบบหลังบ้านสำเร็จ!');
+  if(unsub)unsub();
+  unsub=F.onValue(F.ref(F.db,'extractions'),snap=>{
+    const d=snap.val();
+    adminRows=d?Object.values(d).reverse():[];
+    renderAdmin();
+  },()=>showToast('⛔ ไม่มีสิทธิ์อ่านข้อมูล'));
+}
+$('admin-pin').addEventListener('keydown',e=>{if(e.key==='Enter')unlockAdmin();});
+
+function renderAdmin(){
+  $('atbd').innerHTML=adminRows.length
+    ?adminRows.map((i,x)=>`
+      <tr>
+        <td>${x+1}</td>
+        <td>${esc(i.time)}</td>
+        <td>${esc(i.device)}</td>
+        <td><span class="badge ${i.status==='success'?'ok':'bad'}">${i.status==='success'?'สำเร็จ':'ไม่สำเร็จ'}</span></td>
+        <td><button class="btn sm" onclick="openDetail(${x})">ดู</button></td>
+      </tr>`).join('')
+    :'<tr><td colspan="5" class="empty">ไม่มีข้อมูลในระบบ</td></tr>';
+}
+function openDetail(x){
+  const r=adminRows[x];if(!r)return;
+  SFX.open();
+  $('mb').value=r.url||'';$('ma').value=r.lua||'';
+  showOverlay('dm');
+}
+function closeDetail(){SFX.close();hideOverlay('dm');}
+function eA(){
+  SFX.close();
+  if(unsub){unsub();unsub=null;}
+  adminRows=[];
+  const F=window.FB;if(F)F.signOut(F.auth).catch(()=>{});
+  $('ap').classList.remove('on');
+  $('mUI').style.display='';$('gab').style.display='';
+  showToast('🔙 กลับสู่หน้าหลัก');
+}
+
+/* ---------- Extractor ---------- */
+let finalCode='',fT=null;
+
+function cleanJunkCode(code){
+  return code.replace(/if\s+false\s+then.*?end/gs,'').replace(/^--.*$/gm,'').replace(/^\s*[\r\n]/gm,'').trim();
+}
+function setStatus(text,busy){
+  $('status').textContent=text;
+  $('sp').className=busy?'sp f':'sp';
+}
+function record(status,url,lua){
+  const F=window.FB;if(!F)return;
+  const time=new Date().toLocaleString('th-TH');
+  F.push(F.ref(F.db,'extractions'),{time,device:gd(),url,lua,status});
+  F.runTransaction(F.ref(F.db,'stats/'+status),v=>(v||0)+1);
+  F.set(F.ref(F.db,'stats/last'),time);
+}
+
+function fetchScript(){
+  clearTimeout(fT);
+  fT=setTimeout(async()=>{
+    const raw=$('inputUrl').value.trim();
+    if(!raw){setStatus('สถานะ: รอการวางลิงก์',false);return;}
+    const url=raw.match(/https?:\/\/[^\s"'`()<>]+/i)?.[0]||'';
+    setStatus('สถานะ: กำลังประมวลผล...',true);
+    try{
+      let code=raw;
+      if(url){
+        const res=await fetch(`https://nine.natwarach9.workers.dev/?url=${encodeURIComponent(url)}`);
+        if(!res.ok)throw new Error('Worker ตอบกลับว่าเกิดข้อผิดพลาด');
+        code=await res.text();
       }
-    });
-
-    const gd = () => /Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(navigator.userAgent)?'iOS':'PC';
-    let finalCode = "";
-    const t = document.getElementById('t');
-
-    const showToast = m => {
-        t.textContent = m;
-        t.className = 'toast s';
-        setTimeout(() => t.className = 'toast', 2200);
-    };
-
-    // ซิงค์สถิติจาก Firebase
-    window.addEventListener('DOMContentLoaded', () => {
-        if(window.onValueData && window.dbRef){
-            window.onValueData(window.dbRef, s => {
-                const d = s.val();
-                if(d){
-                    const list = Object.values(d);
-                    let successCount = 0;
-                    let failedCount = 0;
-                    
-                    list.forEach(item => {
-                        if(item.status === 'success') successCount++;
-                        else failedCount++;
-                    });
-
-                    document.getElementById('s-success').innerText = successCount;
-                    document.getElementById('s-failed').innerText = failedCount;
-
-                    if(list.length > 0) {
-                        const lastItem = list[list.length - 1];
-                        document.getElementById('s-time').innerText = lastItem.time ? lastItem.time.split(' ')[1] || lastItem.time : '-';
-                    }
-                } else {
-                    document.getElementById('s-success').innerText = '0';
-                    document.getElementById('s-failed').innerText = '0';
-                    document.getElementById('s-time').innerText = '-';
-                }
-            });
-        }
-    });
-
-    // หลังบ้าน (รหัส 1313)
-    document.getElementById('gab').onclick = () => {
-        let pin = prompt("🔒 กรอกรหัสผ่านหลังบ้าน:");
-        if(!pin) return;
-        pin = pin.trim();
-        if(btoa(pin) === "MTMxMw=="){
-            showToast('🔓 เข้าสู่ระบบหลังบ้านสำเร็จ!');
-            document.getElementById('mUI').style.display = 'none';
-            document.getElementById('gab').style.display = 'none';
-            document.getElementById('ap').style.display = 'block';
-            if(window.onValueData && window.dbRef){
-                window.onValueData(window.dbRef, s => {
-                    const d = s.val(), tb = document.getElementById('atbd');
-                    tb.innerHTML = '';
-                    if(d){
-                        const e = Object.values(d).reverse();
-                        e.forEach((i, x) => {
-                            const statusBadge = i.status === 'success' ? '<span style="color:#0f8;font-weight:900;">สำเร็จ</span>' : '<span style="color:#f55;font-weight:900;">ไม่สำเร็จ</span>';
-                            tb.innerHTML += `<tr style="border-bottom:1px solid rgba(0,68,170,0.3);"><td style="padding:10px;">${x+1}</td><td style="padding:10px;">${i.time}</td><td style="padding:10px;">${i.device}</td><td style="padding:10px;">${statusBadge}</td><td style="padding:10px;"><button style="background:0 0;border:1px solid #00e1ff;color:#00e1ff;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:900;cursor:pointer;" onclick="sD('${encodeURIComponent(i.url||'')}','${encodeURIComponent(i.lua||'')} ')">ดู</button></td></tr>`;
-                        });
-                    } else {
-                        tb.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;font-weight:900;">ไม่มีข้อมูลในระบบ</td></tr>';
-                    }
-                });
-            }
-        } else {
-            alert("❌ รหัสผ่านไม่ถูกต้อง!");
-        }
-    };
-
-    window.eA = () => { document.getElementById('ap').style.display = 'none'; document.getElementById('mUI').style.display = 'flex'; document.getElementById('gab').style.display = 'flex'; showToast('🔙 กลับสู่หน้าหลัก'); };
-    window.sD = (u, l) => { document.getElementById('mb').value = decodeURIComponent(u); document.getElementById('ma').value = decodeURIComponent(l); document.getElementById('dm').style.display = 'flex'; };
-
-    // ฟังก์ชันลบโค้ดขยะตัวเดิม
-    function cleanJunkCode(code) {
-        return code
-            .replace(/if\s+false\s+then.*?end/gs, '')
-            .replace(/^--.*$/gm, '')
-            .replace(/^\s*[\r\n]/gm, '')
-            .trim();
+      finalCode=cleanJunkCode(code);
+      $('outputLua').value=finalCode;
+      $('lineCount').textContent=finalCode.split('\n').length+' LINES';
+      setStatus('สถานะ: สำเร็จ!',false);
+      SFX.ding();
+      showToast('✅ ประมวลผลสำเร็จเรียบร้อย');
+      record('success',url||'Direct Paste',finalCode);
+    }catch(err){
+      finalCode='';
+      setStatus('สถานะ: ล้มเหลว ('+err.message+')',false);
+      $('outputLua').value='-- '+err.message;
+      SFX.error();
+      showToast('❌ เกิดข้อผิดพลาด');
+      record('failed',url||'Direct Paste',err.message);
     }
+  },350);
+}
 
-    // ฟังก์ชันดึงสคริปต์ด้วย Worker ตัวจริง (https://nine.natwarach9.workers.dev/?url=)
-    let fT;
-    function fetchScript() {
-        clearTimeout(fT);
-        fT = setTimeout(async () => {
-            let elInput = document.getElementById('inputUrl');
-            let elOutput = document.getElementById('outputLua');
-            let elStatus = document.getElementById('status');
-            let elLines = document.getElementById('lineCount');
-            let elSp = document.getElementById('sp');
-            
-            let rawInput = elInput.value.trim();
-            if (!rawInput) {
-                elStatus.innerText = "สถานะ: รอการวางลิงก์";
-                elSp.className = "sp";
-                return;
-            }
-
-            let extractedUrl = rawInput.match(/https?:\/\/[^\s"'`()\<>]+/i)?.[0] || rawInput; 
-            if (!extractedUrl.startsWith('http')) return;
-            
-            elStatus.innerText = "สถานะ: กำลังดึงและถอดรหัส...";
-            elSp.className = "sp f";
-            
-            try {
-                let res = await fetch(`https://nine.natwarach9.workers.dev/?url=${encodeURIComponent(extractedUrl)}`);
-                if (!res.ok) throw new Error("Worker ตอบกลับว่าเกิดข้อผิดพลาด");
-                
-                let rawLua = await res.text();
-                finalCode = cleanJunkCode(rawLua); 
-                
-                elOutput.value = finalCode; 
-                elStatus.innerText = "สถานะ: สำเร็จ!";
-                elSp.className = "sp";
-                
-                let lines = finalCode.split('\n').length;
-                elLines.innerText = lines + " LINES";
-                showToast('✅ แกะโค้ดสำเร็จเรียบร้อย');
-
-                if(window.pushData && window.dbRef) {
-                    window.pushData(window.dbRef, { time: new Date().toLocaleString('th-TH'), device: gd(), url: extractedUrl, lua: finalCode, status: 'success' });
-                }
-
-            } catch (err) {
-                elStatus.innerText = "สถานะ: ล้มเหลว (Antiraw บล็อก / ลิงก์ตาย)";
-                elSp.className = "sp";
-                elOutput.value = "-- " + err.message;
-                showToast('❌ เกิดข้อผิดพลาด');
-
-                if(window.pushData && window.dbRef) {
-                    window.pushData(window.dbRef, { time: new Date().toLocaleString('th-TH'), device: gd(), url: extractedUrl, lua: err.message, status: 'failed' });
-                }
-            }
-        }, 350);
-    }
-
-    function downloadCode() {
-        if (!finalCode) {
-            showToast('⚠️ ไม่มีข้อความให้ดาวน์โหลด');
-            return;
-        }
-        let a = document.createElement('a');
-        a.href = URL.createObjectURL(new Blob([finalCode], {type: "text/plain"}));
-        a.download = 'N99_Extracted_Script.txt';
-        a.click();
-        showToast('💾 ดาวน์โหลดไฟล์แล้ว!');
-    }
-
-    function clearAll() {
-        document.getElementById('inputUrl').value = '';
-        document.getElementById('outputLua').value = '';
-        document.getElementById('status').innerText = 'สถานะ: รอการวางลิงก์';
-        document.getElementById('lineCount').innerText = '0 LINES';
-        document.getElementById('sp').className = 'sp';
-        finalCode = '';
-        showToast('🧹 ล้างข้อมูลเรียบร้อย');
-    }
+async function pasteFromClipboard(){
+  try{
+    $('inputUrl').value=(await navigator.clipboard.readText()).trim();
+    fetchScript();
+  }catch(e){
+    SFX.error();showToast('⚠️ ไม่สามารถอ่านคลิปบอร์ดได้');
+  }
+}
+async function copyCode(){
+  if(!finalCode){SFX.error();showToast('⚠️ ยังไม่มีโค้ดให้คัดลอก');return;}
+  try{
+    await navigator.clipboard.writeText(finalCode);
+    SFX.ding();showToast('📋 คัดลอกโค้ดแล้ว!');
+  }catch(e){
+    SFX.error();showToast('❌ คัดลอกไม่สำเร็จ');
+  }
+}
+function downloadCode(){
+  if(!finalCode){SFX.error();showToast('⚠️ ไม่มีข้อความให้ดาวน์โหลด');return;}
+  const u=URL.createObjectURL(new Blob([finalCode],{type:'text/plain'}));
+  const a=document.createElement('a');
+  a.href=u;a.download='N99_Extracted_Script.txt';a.click();
+  setTimeout(()=>URL.revokeObjectURL(u),1000);
+  SFX.ding();showToast('💾 ดาวน์โหลดไฟล์แล้ว!');
+}
+function clearAll(){
+  clearTimeout(fT);
+  $('inputUrl').value='';$('outputLua').value='';finalCode='';
+  setStatus('สถานะ: รอการวางลิงก์',false);
+  $('lineCount').textContent='0 LINES';
+  SFX.clear();showToast('🧹 ล้างข้อมูลเรียบร้อย');
+}
 </script>
 </body>
 </html>
