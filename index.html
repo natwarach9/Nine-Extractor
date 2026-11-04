@@ -12,12 +12,13 @@
   --bg1:#030817;--bg2:#0a1836;--bg3:#18397a;
   --card:linear-gradient(160deg,rgba(24,46,92,.88),rgba(8,17,40,.94));
   --line:rgba(125,211,252,.35);
-  --sky:#7dd3fc;--sky2:#38bdf8;
+  --sky:#7dd3fc;--sky2:#38bdf8;--deep:#0369a1;
   --txt:#e6f4ff;--muted:#9bbfe4;
   --ok:#6ee7b7;--bad:#fda4af;
   --pix:'Press Start 2P',monospace;
   --mono:'JetBrains Mono',monospace;
   --spring:cubic-bezier(.34,1.56,.64,1);
+  --R:min(76vh,84vw);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
@@ -31,14 +32,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:inherit;text-decoration:none}
 textarea,input{font-family:inherit}
 
-/* ---------- ฉาก ---------- */
+/* ---------- ฉาก: ดาว เมฆ พระอาทิตย์ พื้น ---------- */
 .star{position:fixed;width:3px;height:3px;background:#fff;box-shadow:0 0 8px #bae6fd;z-index:0;pointer-events:none;animation:tw 3s ease-in-out infinite}
 .cloud{position:fixed;left:0;width:110px;height:34px;z-index:0;pointer-events:none;border-radius:999px;background:rgba(186,230,253,.16);box-shadow:inset 0 2px 0 rgba(255,255,255,.12),0 0 24px rgba(125,211,252,.12);animation:drift linear infinite}
 .cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
 .cloud::before{width:46px;height:46px;left:18px;top:-22px}
 .cloud::after{width:34px;height:34px;left:54px;top:-14px}
 .orbit{position:fixed;left:50%;bottom:0;width:0;height:0;z-index:0;pointer-events:none;transform-origin:0 0;animation:orbit 80s ease-in-out infinite alternate}
-.sun{position:absolute;left:-46px;bottom:calc(min(76vh,84vw) - 46px);width:92px;height:92px}
+.sun{position:absolute;left:-46px;bottom:calc(var(--R) - 46px);width:92px;height:92px}
 .sun::before{content:"";position:absolute;inset:-70px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.35),rgba(251,146,60,.1) 45%,transparent 70%);animation:glow 4s ease-in-out infinite}
 .sun i{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffbeb,#fde68a 40%,#fbbf24 75%,#f59e0b);box-shadow:0 0 28px 6px rgba(253,224,71,.5),0 0 90px 24px rgba(251,146,60,.3);animation:glow 4s ease-in-out infinite}
 .ground{position:fixed;left:0;right:0;bottom:0;height:40px;z-index:0;pointer-events:none;border-top:3px solid #06130b;background:linear-gradient(180deg,#2f7a3c 0 8px,#1f5a2b 8px 14px,#6b4226 14px 18px,#4a2d19 18px 100%)}
@@ -61,10 +62,7 @@ textarea,input{font-family:inherit}
 .btn.warn{background:linear-gradient(180deg,#4c1d3a,#2a0f22);border-color:var(--bad);color:#ffe4e6}
 .btn.sm{padding:8px 14px;font-size:12.5px;border-radius:12px}
 .btn.block{width:100%}
-.btn.tt{background:linear-gradient(180deg,#1f2937,#05070d);border-color:#25f4ee;color:#fff;box-shadow:0 5px 0 #03050a,0 0 16px rgba(37,244,238,.35),inset 0 1px 0 rgba(255,255,255,.15)}
-.btn.tt:hover{box-shadow:0 8px 0 #03050a,0 0 26px rgba(254,44,85,.55),inset 0 1px 0 rgba(255,255,255,.2)}
-.btn.dc{background:linear-gradient(180deg,#5865f2,#3b47c4);border-color:#c7d2fe;color:#fff;box-shadow:0 5px 0 #1c2470,0 0 16px rgba(88,101,242,.4),inset 0 1px 0 rgba(255,255,255,.25)}
-.btn.dc:hover{box-shadow:0 8px 0 #1c2470,0 0 26px rgba(88,101,242,.7),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn-row .btn{white-space:normal;line-height:1.3}
 .afb{position:fixed;right:16px;bottom:18px;z-index:50}
 
 /* ---------- การ์ด ---------- */
@@ -88,12 +86,6 @@ textarea,input{font-family:inherit}
 .hero h2{font-size:clamp(26px,6vw,34px);font-weight:700;line-height:1.4;margin-bottom:14px}
 .grad{display:inline-block;margin-top:10px;font-family:var(--pix);font-size:.55em;line-height:1.9;background:linear-gradient(90deg,#7dd3fc,#38bdf8,#e0f2fe,#38bdf8,#7dd3fc);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
 .hero .sub{font-size:13.5px;line-height:1.85;color:var(--muted);max-width:420px;margin:0 auto 20px}
-
-/* ---------- เครดิต (ตัวมายคราฟ) ---------- */
-.credit{margin:0 auto 30px;max-width:420px;text-align:center;animation:rise 1s ease both}
-.credit-title{font-family:var(--pix);font-size:13px;line-height:1.8;color:#e0f2fe;text-shadow:4px 4px 0 #075985,0 0 22px rgba(56,189,248,.55);margin-bottom:16px}
-.credit-row{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
-.credit-row .btn{font-size:13px;padding:11px 18px}
 
 /* ---------- Stats ---------- */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;animation:rise .9s ease both}
@@ -123,6 +115,23 @@ textarea,input{font-family:inherit}
 .sp{width:12px;height:12px;flex-shrink:0;border-radius:50%;background:var(--sky2);box-shadow:0 0 10px var(--sky2)}
 .sp.f{background:transparent;border:3px solid var(--sky);border-right-color:transparent;box-shadow:none;animation:spin .8s linear infinite}
 .btn-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+/* ---------- เส้นแบ่งและเครดิต ---------- */
+.divider{width:100%;height:2px;margin:36px 0 28px;border-radius:2px;background:linear-gradient(90deg,transparent,var(--sky) 20%,var(--sky2) 50%,var(--sky) 80%,transparent);box-shadow:0 0 14px rgba(56,189,248,.55)}
+.credit{padding:22px 20px 24px;border-radius:26px;text-align:center;animation:rise 1s ease both}
+.credit-head{display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:18px}
+.credit-head .px{font-family:var(--pix);font-size:14px;line-height:1.5;color:#e0f2fe;text-shadow:3px 3px 0 #075985,0 0 18px rgba(56,189,248,.6)}
+.credit-head em{font-style:normal;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.5px}
+.credit-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.soc{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border-radius:16px;font-family:var(--pix);font-size:10px;letter-spacing:.5px;color:#fff;border:2px solid #e0f2fe;box-shadow:0 5px 0 #050c22,0 10px 22px -8px rgba(56,189,248,.5);transition:transform .25s var(--spring),box-shadow .2s,filter .2s}
+.soc svg{width:20px;height:20px;fill:currentColor;flex-shrink:0}
+.soc::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:skewX(-20deg);transition:left .6s;pointer-events:none}
+.soc:hover{transform:translateY(-4px);filter:brightness(1.12);box-shadow:0 9px 0 #050c22,0 14px 28px -8px rgba(56,189,248,.8)}
+.soc:hover::after{left:120%}
+.soc:active{transform:translateY(4px) scale(.95);box-shadow:0 1px 0 #050c22}
+.soc.tt{background:linear-gradient(180deg,#1e293b,#000);border-color:#22d3ee;box-shadow:0 5px 0 #050c22,0 0 22px rgba(34,211,238,.35)}
+.soc.dc{background:linear-gradient(180deg,#7c8bff,#4752c4);border-color:#e0e7ff}
+.soc .ext{font-family:var(--mono);font-size:12px;opacity:.85}
 
 /* ---------- Dialog ---------- */
 .overlay{position:fixed;inset:0;z-index:500;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,6,18,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
@@ -197,8 +206,7 @@ td.empty{text-align:center;padding:26px;color:var(--muted)}
   .card{padding:18px}
   .btn-row .btn{font-size:12px;padding:12px 4px}
   .gem{width:92px;height:92px}
-  .credit-title{font-size:11px}
-  .credit-row .btn{font-size:12px;padding:10px 14px}
+  .soc{font-size:9px;padding:13px 6px}
 }
 </style>
 
@@ -277,14 +285,7 @@ window.FB={db:getDatabase(app),auth:getAuth(app),ref,push,set,onValue,runTransac
     <div class="pill"><i class="dot"></i>สคริปต์พร้อมใช้งาน</div>
     <h2>ค้นหา แล้วเริ่มใช้<br><span class="grad">NINE SCRIPTS</span></h2>
     <p class="sub">รวมสคริปต์ไว้ในที่เดียว วางลิงก์หรือโค้ด แล้วคัดลอกผลลัพธ์ได้ทันที</p>
-  </section>
-
-  <section class="credit">
-    <div class="credit-title">เครดิต</div>
-    <div class="credit-row">
-      <a class="btn tt" href="https://www.tiktok.com/@67.nine?_r=1&_t=ZS-9B6vDBk8PZq" target="_blank" rel="noopener noreferrer">TIKTOK ↗</a>
-      <a class="btn dc" href="https://discord.gg/ahRxUjabDP" target="_blank" rel="noopener noreferrer">DISCORD ↗</a>
-    </div>
+    <a class="btn sm" href="https://discord.gg/enq9Cy4nwa" target="_blank" rel="noopener noreferrer">พูดคุยใน Discord ↗</a>
   </section>
 
   <section class="stats">
@@ -317,6 +318,25 @@ window.FB={db:getDatabase(app),auth:getAuth(app),ref,push,set,onValue,runTransac
       <button class="btn warn" onclick="clearAll()">ล้าง</button>
     </div>
   </main>
+
+  <div class="divider" aria-hidden="true"></div>
+
+  <section class="panel credit">
+    <div class="credit-head">
+      <span class="px">CREDIT</span>
+      <em>เครดิต</em>
+    </div>
+    <div class="credit-row">
+      <a class="soc tt" href="https://www.tiktok.com/@67.nine?_r=1&amp;_t=ZS-9B6vDBk8PZq" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 6.2c-1.2-.8-2.1-2-2.4-3.4h-3.3v13.1c0 1.6-1.3 2.9-2.9 2.9s-2.9-1.3-2.9-2.9 1.3-2.9 2.9-2.9c.3 0 .6 0 .9.1V9.3c-.3 0-.6-.1-.9-.1-3.4 0-6.2 2.8-6.2 6.2s2.8 6.2 6.2 6.2 6.2-2.8 6.2-6.2V9.5c1.3.9 2.8 1.4 4.4 1.4V7.6c-.9 0-1.8-.5-2.4-1.4z"/></svg>
+        <span>TIKTOK</span><span class="ext">↗</span>
+      </a>
+      <a class="soc dc" href="https://discord.gg/ahRxUjabDP" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4.5A17 17 0 0 0 15.8 3.2l-.5 1a15.7 15.7 0 0 0-4.6 0l-.5-1A17 17 0 0 0 6.1 4.5C3.5 8.4 2.8 12.2 3.1 15.9a17 17 0 0 0 5.2 2.6l1.1-1.8a11 11 0 0 1-1.7-.8l.4-.3a12 12 0 0 0 10.4 0l.4.3c-.5.3-1.1.6-1.7.8l1.1 1.8a17 17 0 0 0 5.2-2.6c.4-4.3-.7-8-2.9-11.4zM9 13.5c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2zm6 0c-1 0-1.8-.9-1.8-2s.8-2 1.8-2 1.8.9 1.8 2-.8 2-1.8 2z"/></svg>
+        <span>DISCORD</span><span class="ext">↗</span>
+      </a>
+    </div>
+  </section>
 </div>
 
 <button class="btn sm afb" id="gab" onclick="openAdmin()">⚙️ หลังบ้าน</button>
@@ -394,50 +414,64 @@ const gd=()=>/Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(
 const LOGIN_HASH='MTIxMg==';
 const ADMIN_EMAIL='YOUR_ADMIN_EMAIL@example.com';
 
-/* ---------- เสียงทุบบล็อก (สร้างในเบราว์เซอร์ ความดังเต็มที่ขึ้น) ---------- */
-let AC=null,NB=null;
+/* ---------- เสียงทุบบล็อกแบบ Minecraft (สร้างในเบราว์เซอร์ ไม่ต้องโหลดไฟล์) ---------- */
+let AC=null,MASTER=null,NB=null;
 const ctx=()=>{
-  if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();
-  if(AC.state==='suspended')AC.resume();
+  if(!AC){
+    AC=new(window.AudioContext||window.webkitAudioContext)();
+    const comp=AC.createDynamicsCompressor();
+    MASTER=AC.createGain();
+    MASTER.gain.value=1;
+    MASTER.connect(comp).connect(AC.destination);
+  }
+  if(AC.state!=='running')AC.resume();
   return AC;
 };
 const noise=()=>{
   if(NB)return NB;
-  const c=ctx();NB=c.createBuffer(1,c.sampleRate*.3,c.sampleRate);
+  const c=ctx();
+  NB=c.createBuffer(1,Math.floor(c.sampleRate*.3),c.sampleRate);
   const d=NB.getChannelData(0);
-  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+  for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
   return NB;
 };
-// โทนแบบ square/triangle ความดังมากพอให้ได้ยินบนมือถือ
-const tone=(f1,f2,t,dur,vol,type='square')=>{
+const tone=(f1,f2,t,dur,vol,type='triangle')=>{
   const c=ctx(),o=c.createOscillator(),g=c.createGain();
   o.type=type;
   o.frequency.setValueAtTime(f1,t);
-  o.frequency.exponentialRampToValueAtTime(Math.max(f2,20),t+dur);
+  o.frequency.exponentialRampToValueAtTime(f2,t+dur);
   g.gain.setValueAtTime(vol,t);
   g.gain.exponentialRampToValueAtTime(.001,t+dur);
-  o.connect(g).connect(c.destination);
-  o.start(t);o.stop(t+dur+.02);
+  o.connect(g).connect(MASTER);
+  o.start(t);o.stop(t+dur+.03);
 };
 const SFX={
-  // ทุบบล็อก: คลิกแตกกรอบ + เสียงตุ้บต่ำ + เสียงก้อนหินแตกเล็กน้อย
   hit(p=1){
     const c=ctx(),t=c.currentTime;
-    const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
+    // เสียงแตกของหิน
+    const s=c.createBufferSource(),bp=c.createBiquadFilter(),g=c.createGain();
     s.buffer=noise();s.playbackRate.value=p;
-    f.type='bandpass';f.frequency.value=1800*p;f.Q.value=.7;
-    g.gain.setValueAtTime(1,t);g.gain.exponentialRampToValueAtTime(.001,t+.18);
-    s.connect(f).connect(g).connect(c.destination);s.start(t);
-    tone(260*p,60,t,.14,.9,'square');
-    tone(120*p,40,t,.22,.8,'triangle');
+    bp.type='bandpass';bp.frequency.value=1300*p;bp.Q.value=.6;
+    g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.13);
+    s.connect(bp).connect(g).connect(MASTER);
+    s.start(t);s.stop(t+.14);
+    // เสียงตุ้บต่ำ
+    tone(200*p,60,t,.15,.8,'triangle');
+    // คลิกแหลมตอนกระทบ
+    tone(1600*p,800*p,t,.035,.25,'square');
   },
-  ding(){const t=ctx().currentTime;[1047,1319,1568].forEach((f,i)=>tone(f,f,t+i*.07,.22,.5,'square'))},
-  error(){tone(190,50,ctx().currentTime,.32,.6,'sawtooth')},
-  open(){tone(520,800,ctx().currentTime,.12,.6)},
-  close(){tone(620,300,ctx().currentTime,.12,.6)},
-  start(){const t=ctx().currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,f,t+i*.09,.18,.5,'square'))},
-  clear(){tone(480,160,ctx().currentTime,.22,.6)}
+  ding(){const t=ctx().currentTime;[1047,1319,1568].forEach((f,i)=>tone(f,f,t+i*.07,.2,.18,'square'))},
+  error(){tone(170,60,ctx().currentTime,.3,.3,'sawtooth')},
+  open(){tone(520,780,ctx().currentTime,.12,.35)},
+  close(){tone(600,380,ctx().currentTime,.12,.35)},
+  start(){const t=ctx().currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,f,t+i*.09,.18,.2,'square'))},
+  clear(){tone(480,200,ctx().currentTime,.2,.3)}
 };
+// ให้เสียงเล่นได้ แม้สวิตช์ข้างเครื่องอยู่โหมดเงียบ (Safari iOS 16.4+)
+function unlockAudio(){
+  try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(_){}
+  try{ctx();}catch(_){}
+}
 
 /* ---------- เอฟเฟกต์กดปุ่ม: เสียง + อนุภาคพิกเซลกระเด็น ---------- */
 function burst(x,y,col){
@@ -457,7 +491,7 @@ document.addEventListener('pointerdown',e=>{
   const b=e.target.closest('button,a');
   if(!b)return;
   try{SFX.hit(.85+Math.random()*.35);}catch(_){}
-  burst(e.clientX,e.clientY,b.classList.contains('pri')||b.classList.contains('dc')?'#38bdf8':'#7dd3fc');
+  burst(e.clientX,e.clientY,b.classList.contains('pri')?'#38bdf8':'#7dd3fc');
   if(navigator.vibrate)navigator.vibrate(10);
 });
 
@@ -476,6 +510,7 @@ let started=false;
 function startApp(){
   if(started)return;
   started=true;
+  unlockAudio();
   SFX.start();
   $('splash').classList.add('out');
   setTimeout(()=>{
