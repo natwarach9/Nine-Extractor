@@ -12,13 +12,12 @@
   --bg1:#030817;--bg2:#0a1836;--bg3:#18397a;
   --card:linear-gradient(160deg,rgba(24,46,92,.88),rgba(8,17,40,.94));
   --line:rgba(125,211,252,.35);
-  --sky:#7dd3fc;--sky2:#38bdf8;--deep:#0369a1;
+  --sky:#7dd3fc;--sky2:#38bdf8;
   --txt:#e6f4ff;--muted:#9bbfe4;
   --ok:#6ee7b7;--bad:#fda4af;
   --pix:'Press Start 2P',monospace;
   --mono:'JetBrains Mono',monospace;
   --spring:cubic-bezier(.34,1.56,.64,1);
-  --R:min(76vh,84vw);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{
@@ -32,14 +31,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 a{color:inherit;text-decoration:none}
 textarea,input{font-family:inherit}
 
-/* ---------- ฉาก: ดาว เมฆ พระอาทิตย์ พื้น ---------- */
+/* ---------- ฉาก ---------- */
 .star{position:fixed;width:3px;height:3px;background:#fff;box-shadow:0 0 8px #bae6fd;z-index:0;pointer-events:none;animation:tw 3s ease-in-out infinite}
 .cloud{position:fixed;left:0;width:110px;height:34px;z-index:0;pointer-events:none;border-radius:999px;background:rgba(186,230,253,.16);box-shadow:inset 0 2px 0 rgba(255,255,255,.12),0 0 24px rgba(125,211,252,.12);animation:drift linear infinite}
 .cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
 .cloud::before{width:46px;height:46px;left:18px;top:-22px}
 .cloud::after{width:34px;height:34px;left:54px;top:-14px}
 .orbit{position:fixed;left:50%;bottom:0;width:0;height:0;z-index:0;pointer-events:none;transform-origin:0 0;animation:orbit 80s ease-in-out infinite alternate}
-.sun{position:absolute;left:-46px;bottom:calc(var(--R) - 46px);width:92px;height:92px}
+.sun{position:absolute;left:-46px;bottom:calc(min(76vh,84vw) - 46px);width:92px;height:92px}
 .sun::before{content:"";position:absolute;inset:-70px;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.35),rgba(251,146,60,.1) 45%,transparent 70%);animation:glow 4s ease-in-out infinite}
 .sun i{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fffbeb,#fde68a 40%,#fbbf24 75%,#f59e0b);box-shadow:0 0 28px 6px rgba(253,224,71,.5),0 0 90px 24px rgba(251,146,60,.3);animation:glow 4s ease-in-out infinite}
 .ground{position:fixed;left:0;right:0;bottom:0;height:40px;z-index:0;pointer-events:none;border-top:3px solid #06130b;background:linear-gradient(180deg,#2f7a3c 0 8px,#1f5a2b 8px 14px,#6b4226 14px 18px,#4a2d19 18px 100%)}
@@ -62,7 +61,10 @@ textarea,input{font-family:inherit}
 .btn.warn{background:linear-gradient(180deg,#4c1d3a,#2a0f22);border-color:var(--bad);color:#ffe4e6}
 .btn.sm{padding:8px 14px;font-size:12.5px;border-radius:12px}
 .btn.block{width:100%}
-.btn-row .btn{white-space:normal;line-height:1.3}
+.btn.tt{background:linear-gradient(180deg,#1f2937,#05070d);border-color:#25f4ee;color:#fff;box-shadow:0 5px 0 #03050a,0 0 16px rgba(37,244,238,.35),inset 0 1px 0 rgba(255,255,255,.15)}
+.btn.tt:hover{box-shadow:0 8px 0 #03050a,0 0 26px rgba(254,44,85,.55),inset 0 1px 0 rgba(255,255,255,.2)}
+.btn.dc{background:linear-gradient(180deg,#5865f2,#3b47c4);border-color:#c7d2fe;color:#fff;box-shadow:0 5px 0 #1c2470,0 0 16px rgba(88,101,242,.4),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn.dc:hover{box-shadow:0 8px 0 #1c2470,0 0 26px rgba(88,101,242,.7),inset 0 1px 0 rgba(255,255,255,.3)}
 .afb{position:fixed;right:16px;bottom:18px;z-index:50}
 
 /* ---------- การ์ด ---------- */
@@ -86,6 +88,12 @@ textarea,input{font-family:inherit}
 .hero h2{font-size:clamp(26px,6vw,34px);font-weight:700;line-height:1.4;margin-bottom:14px}
 .grad{display:inline-block;margin-top:10px;font-family:var(--pix);font-size:.55em;line-height:1.9;background:linear-gradient(90deg,#7dd3fc,#38bdf8,#e0f2fe,#38bdf8,#7dd3fc);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 4s linear infinite}
 .hero .sub{font-size:13.5px;line-height:1.85;color:var(--muted);max-width:420px;margin:0 auto 20px}
+
+/* ---------- เครดิต (ตัวมายคราฟ) ---------- */
+.credit{margin:0 auto 30px;max-width:420px;text-align:center;animation:rise 1s ease both}
+.credit-title{font-family:var(--pix);font-size:13px;line-height:1.8;color:#e0f2fe;text-shadow:4px 4px 0 #075985,0 0 22px rgba(56,189,248,.55);margin-bottom:16px}
+.credit-row{display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap}
+.credit-row .btn{font-size:13px;padding:11px 18px}
 
 /* ---------- Stats ---------- */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;animation:rise .9s ease both}
@@ -189,6 +197,8 @@ td.empty{text-align:center;padding:26px;color:var(--muted)}
   .card{padding:18px}
   .btn-row .btn{font-size:12px;padding:12px 4px}
   .gem{width:92px;height:92px}
+  .credit-title{font-size:11px}
+  .credit-row .btn{font-size:12px;padding:10px 14px}
 }
 </style>
 
@@ -258,7 +268,7 @@ window.FB={db:getDatabase(app),auth:getAuth(app),ref,push,set,onValue,runTransac
     </div>
     <div class="actions">
       <button class="btn sm" onclick="location.reload()">↻ รีเฟรช</button>
-      <a class="btn sm" href="https://discord.gg/enq9Cy4nwa" target="_blank" rel="noopener">Discord ↗</a>
+      <a class="btn sm" href="https://discord.gg/enq9Cy4nwa" target="_blank" rel="noopener noreferrer">Discord ↗</a>
     </div>
   </header>
 
@@ -267,7 +277,14 @@ window.FB={db:getDatabase(app),auth:getAuth(app),ref,push,set,onValue,runTransac
     <div class="pill"><i class="dot"></i>สคริปต์พร้อมใช้งาน</div>
     <h2>ค้นหา แล้วเริ่มใช้<br><span class="grad">NINE SCRIPTS</span></h2>
     <p class="sub">รวมสคริปต์ไว้ในที่เดียว วางลิงก์หรือโค้ด แล้วคัดลอกผลลัพธ์ได้ทันที</p>
-    <a class="btn sm" href="https://discord.gg/enq9Cy4nwa" target="_blank" rel="noopener">พูดคุยใน Discord ↗</a>
+  </section>
+
+  <section class="credit">
+    <div class="credit-title">เครดิต</div>
+    <div class="credit-row">
+      <a class="btn tt" href="https://www.tiktok.com/@67.nine?_r=1&_t=ZS-9B6vDBk8PZq" target="_blank" rel="noopener noreferrer">TIKTOK ↗</a>
+      <a class="btn dc" href="https://discord.gg/ahRxUjabDP" target="_blank" rel="noopener noreferrer">DISCORD ↗</a>
+    </div>
   </section>
 
   <section class="stats">
@@ -377,7 +394,7 @@ const gd=()=>/Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(
 const LOGIN_HASH='MTIxMg==';
 const ADMIN_EMAIL='YOUR_ADMIN_EMAIL@example.com';
 
-/* ---------- เสียงแบบ Minecraft (สร้างในเบราว์เซอร์ ไม่ต้องโหลดไฟล์) ---------- */
+/* ---------- เสียงทุบบล็อก (สร้างในเบราว์เซอร์ ความดังเต็มที่ขึ้น) ---------- */
 let AC=null,NB=null;
 const ctx=()=>{
   if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();
@@ -386,36 +403,40 @@ const ctx=()=>{
 };
 const noise=()=>{
   if(NB)return NB;
-  const c=ctx();NB=c.createBuffer(1,c.sampleRate*.25,c.sampleRate);
+  const c=ctx();NB=c.createBuffer(1,c.sampleRate*.3,c.sampleRate);
   const d=NB.getChannelData(0);
-  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);
+  for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
   return NB;
 };
-const tone=(f1,f2,t,dur,vol,type='triangle')=>{
+// โทนแบบ square/triangle ความดังมากพอให้ได้ยินบนมือถือ
+const tone=(f1,f2,t,dur,vol,type='square')=>{
   const c=ctx(),o=c.createOscillator(),g=c.createGain();
   o.type=type;
   o.frequency.setValueAtTime(f1,t);
-  o.frequency.exponentialRampToValueAtTime(f2,t+dur);
+  o.frequency.exponentialRampToValueAtTime(Math.max(f2,20),t+dur);
   g.gain.setValueAtTime(vol,t);
   g.gain.exponentialRampToValueAtTime(.001,t+dur);
   o.connect(g).connect(c.destination);
   o.start(t);o.stop(t+dur+.02);
 };
 const SFX={
-  hit(p=1){ // ทุบบล็อก: คลิ๊กแหลม + ตุ้บต่ำ
-    const c=ctx(),t=c.currentTime,s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
+  // ทุบบล็อก: คลิกแตกกรอบ + เสียงตุ้บต่ำ + เสียงก้อนหินแตกเล็กน้อย
+  hit(p=1){
+    const c=ctx(),t=c.currentTime;
+    const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
     s.buffer=noise();s.playbackRate.value=p;
-    f.type='bandpass';f.frequency.value=1100*p;f.Q.value=.9;
-    g.gain.setValueAtTime(.7,t);g.gain.exponentialRampToValueAtTime(.001,t+.14);
+    f.type='bandpass';f.frequency.value=1800*p;f.Q.value=.7;
+    g.gain.setValueAtTime(1,t);g.gain.exponentialRampToValueAtTime(.001,t+.18);
     s.connect(f).connect(g).connect(c.destination);s.start(t);
-    tone(220*p,70,t,.12,.5);
+    tone(260*p,60,t,.14,.9,'square');
+    tone(120*p,40,t,.22,.8,'triangle');
   },
-  ding(){const t=ctx().currentTime;[1047,1319,1568].forEach((f,i)=>tone(f,f,t+i*.07,.2,.18,'square'))},
-  error(){tone(170,60,ctx().currentTime,.3,.3,'sawtooth')},
-  open(){tone(520,780,ctx().currentTime,.12,.35)},
-  close(){tone(600,380,ctx().currentTime,.12,.35)},
-  start(){const t=ctx().currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,f,t+i*.09,.18,.2,'square'))},
-  clear(){tone(480,200,ctx().currentTime,.2,.3)}
+  ding(){const t=ctx().currentTime;[1047,1319,1568].forEach((f,i)=>tone(f,f,t+i*.07,.22,.5,'square'))},
+  error(){tone(190,50,ctx().currentTime,.32,.6,'sawtooth')},
+  open(){tone(520,800,ctx().currentTime,.12,.6)},
+  close(){tone(620,300,ctx().currentTime,.12,.6)},
+  start(){const t=ctx().currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,f,t+i*.09,.18,.5,'square'))},
+  clear(){tone(480,160,ctx().currentTime,.22,.6)}
 };
 
 /* ---------- เอฟเฟกต์กดปุ่ม: เสียง + อนุภาคพิกเซลกระเด็น ---------- */
@@ -436,7 +457,7 @@ document.addEventListener('pointerdown',e=>{
   const b=e.target.closest('button,a');
   if(!b)return;
   try{SFX.hit(.85+Math.random()*.35);}catch(_){}
-  burst(e.clientX,e.clientY,b.classList.contains('pri')?'#38bdf8':'#7dd3fc');
+  burst(e.clientX,e.clientY,b.classList.contains('pri')||b.classList.contains('dc')?'#38bdf8':'#7dd3fc');
   if(navigator.vibrate)navigator.vibrate(10);
 });
 
