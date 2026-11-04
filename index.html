@@ -469,7 +469,7 @@ function unlockAudio(){
   try{ctx();}catch(_){}
 }
 
-/* ---------- เอฟเฟกต์กดปุ่ม: เสียง + อนุภาคพิกเซลกระเด็น ---------- */
+/* ---------- เอฟเฟกต์กดปุ่ม: เสียง + อนุภาคพิกเซลกระเด็น (ยกเว้นตอนพิมพ์ใน textarea/input) ---------- */
 function burst(x,y,col){
   for(let i=0;i<12;i++){
     const p=document.createElement('i');
@@ -484,6 +484,9 @@ function burst(x,y,col){
   }
 }
 document.addEventListener('pointerdown',e=>{
+  // ข้ามการเล่นเสียงและเอฟเฟกต์หากคลิกพิมพ์ในกล่องข้อความหรือช่องกรอก
+  if(e.target.closest('textarea, input')) return;
+
   const b=e.target.closest('button,a');
   if(!b)return;
   try{SFX.hit(.85+Math.random()*.35);}catch(_){}
@@ -543,7 +546,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(F)F.onValue(F.ref(F.db,'stats'),snap=>renderStats(snap.val()));
 });
 
-/* ---------- เชื่อมต่อ Backend บน Render (เพิ่มส่วนนี้เพื่อให้เว็บยิงไปถอดรหัสได้) ---------- */
+/* ---------- เชื่อมต่อ Backend บน Render ---------- */
 const RENDER_API_URL = 'https://nine-extractor-backend.onrender.com/deobfuscate';
 let fetchTimer = null;
 function fetchScript() {
