@@ -448,16 +448,13 @@ const tone=(f1,f2,t,dur,vol,type='triangle')=>{
 const SFX={
   hit(p=1){
     const c=ctx(),t=c.currentTime;
-    // เสียงแตกของหิน
     const s=c.createBufferSource(),bp=c.createBiquadFilter(),g=c.createGain();
     s.buffer=noise();s.playbackRate.value=p;
     bp.type='bandpass';bp.frequency.value=1300*p;bp.Q.value=.6;
     g.gain.setValueAtTime(.9,t);g.gain.exponentialRampToValueAtTime(.001,t+.13);
     s.connect(bp).connect(g).connect(MASTER);
     s.start(t);s.stop(t+.14);
-    // เสียงตุ้บต่ำ
     tone(200*p,60,t,.15,.8,'triangle');
-    // คลิกแหลมตอนกระทบ
     tone(1600*p,800*p,t,.035,.25,'square');
   },
   ding(){const t=ctx().currentTime;[1047,1319,1568].forEach((f,i)=>tone(f,f,t+i*.07,.2,.18,'square'))},
@@ -467,7 +464,6 @@ const SFX={
   start(){const t=ctx().currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,f,t+i*.09,.18,.2,'square'))},
   clear(){tone(480,200,ctx().currentTime,.2,.3)}
 };
-// ให้เสียงเล่นได้ แม้สวิตช์ข้างเครื่องอยู่โหมดเงียบ (Safari iOS 16.4+)
 function unlockAudio(){
   try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch(_){}
   try{ctx();}catch(_){}
@@ -547,7 +543,107 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(F)F.onValue(F.ref(F.db,'stats'),snap=>renderStats(snap.val()));
 });
 
-/* ---------- Admin (ใช้ Firebase Auth ไม่มีรหัสในโค้ด) ---------- */
+/* ---------- เชื่อมต่อ Backend บน Render (เพิ่มส่วนนี้เพื่อให้เว็บยิงไปถอดรหัสได้) ---------- */
+const RENDER_API_URL = 'https://nine-extractor-backend.onrender.com/deobfuscate';
+let fetchTimer = null;
+function fetchScript() {
+  const code = $('inputUrl').value.trim();
+  const lineCount = code ? code.split('\n').length : 0;
+  $('lineCount').textContent = lineCount + ' LINES';
+
+  if(!code) {
+    $('status').textContent = 'สถานะ: รอการวางโค้ด';
+    $('sp').className = 'sp';
+    $('outputLua').value = '';
+    return;
+  }
+
+  $('status').textContent = 'สถานะ: กำลังประมวลผล...';
+  $('sp').className = 'sp f';
+
+  clearTimeout(fetchTimer);
+  fetchTimer = setTimeout(async () => {
+    try {
+      const response = await fetch(RENDER_API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code })
+      });
+      const data = await response.json();
+
+      if(data.success) {
+        $('outputLua').value = data.deobfuscated_code;
+        $('status').textContent = 'สถานะ: สำเร็จ!';
+        $('sp').className = 'sp';
+        showToast('🎉 แกะสคริปต์สำเร็จ!');
+        recordStats(true, code, data.deobfuscated_code);
+      } else {
+        throw new Error(data.error || 'Unknown error');
+      }
+    } catch(err) {
+      $('status').textContent = 'สถานะ: เกิดข้อผิดพลาด';
+      $('sp').className = 'sp';
+      $('outputLua').value = '-- Error: ' + err.message;
+      showToast('❌ ไม่สามารถประมวลผลได้');
+      recordStats(false, code, err.message);
+    }
+  }, 800);
+}
+
+function recordStats(isSuccess, input, output) {
+  const F = window.FB;
+  if(!F) return;
+  try {
+    const timeStr = new Date().toLocaleString();
+    F.push(F.ref(F.db, 'extractions'), {
+      time: timeStr,
+      device: /Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(navigator.userAgent)?'iOS':'PC',
+      status: isSuccess ? 'success' : 'failed',
+      input: input,
+      output: output
+    });
+    F.runTransaction(F.ref(F.db, 'stats/' + (isSuccess ? 'success' : 'failed')), current => (current || 0) + 1);
+    F.set(F.ref(F.db, 'stats/last'), timeStr);
+  } catch(e) {}
+}
+
+function pasteFromClipboard() {
+  navigator.clipboard.readText().then(text => {
+    $('inputUrl').value = text;
+    fetchScript();
+    showToast('📋 วางข้อความแล้ว');
+  }).catch(() => showToast('⚠️ กรุณากดอนุญาตการเข้าถึงคลิปบอร์ด'));
+}
+
+function copyCode() {
+  const text = $('outputLua').value;
+  if(!text) return showToast('⚠️ ไม่มีโค้ดให้คัดลอก');
+  navigator.clipboard.writeText(text);
+  showToast('📋 คัดลอกโค้ดแล้ว!');
+}
+
+function downloadCode() {
+  const text = $('outputLua').value;
+  if(!text) return showToast('⚠️ ไม่มีโค้ดให้ดาวน์โหลด');
+  const blob = new Blob([text], {type: 'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'extracted_script.lua';
+  a.click();
+  showToast('💾 ดาวน์โหลดไฟล์แล้ว!');
+}
+
+function clearAll() {
+  SFX.clear();
+  $('inputUrl').value = '';
+  $('outputLua').value = '';
+  $('lineCount').textContent = '0 LINES';
+  $('status').textContent = 'สถานะ: ล้างข้อมูลแล้ว';
+  $('sp').className = 'sp';
+  showToast('🧹 ล้างข้อมูลเรียบร้อย');
+}
+
+/* ---------- Admin (ใช้ Firebase Auth) ---------- */
 let adminRows=[],unsub=null;
 function openAdmin(){SFX.open();$('admin-pin').value='';showOverlay('modal-admin');setTimeout(()=>$('admin-pin').focus(),60);}
 function closeAdminUnlock(){SFX.close();hideOverlay('modal-admin');}
@@ -575,116 +671,38 @@ async function unlockAdmin(){
 $('admin-pin').addEventListener('keydown',e=>{if(e.key==='Enter')unlockAdmin();});
 
 function renderAdmin(){
-  $('atbd').innerHTML=adminRows.length
-    ?adminRows.map((i,x)=>`
-      <tr>
-        <td>${x+1}</td>
-        <td>${esc(i.time)}</td>
-        <td>${esc(i.device)}</td>
-        <td><span class="badge ${i.status==='success'?'ok':'bad'}">${i.status==='success'?'สำเร็จ':'ไม่สำเร็จ'}</span></td>
-        <td><button class="btn sm" onclick="openDetail(${x})">ดู</button></td>
-      </tr>`).join('')
-    :'<tr><td colspan="5" class="empty">ไม่มีข้อมูลในระบบ</td></tr>';
+  const tbody=$('atbd');
+  if(adminRows.length===0){
+    tbody.innerHTML='<tr><td colspan="5" class="empty">ยังไม่มีประวัติการใช้งาน</td></tr>';
+    return;
+  }
+  tbody.innerHTML=adminRows.map((r,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${esc(r.time)}</td>
+      <td>${esc(r.device)}</td>
+      <td><span class="badge ${r.status==='success'?'ok':'bad'}">${r.status==='success'?'สำเร็จ':'ไม่สำเร็จ'}</span></td>
+      <td><button class="btn sm" onclick="openDetail(${i})">ดู</button></td>
+    </tr>
+  `).join('');
 }
-function openDetail(x){
-  const r=adminRows[x];if(!r)return;
+function eA(){
+  SFX.close();
+  if(unsub)unsub();
+  window.FB?.signOut(window.FB.auth).catch(()=>{});
+  $('ap').classList.remove('on');
+  $('mUI').style.display='block';$('gab').style.display='block';
+  showToast('🔙 กลับหน้าหลักแล้ว');
+}
+function openDetail(i){
   SFX.open();
-  $('mb').value=r.url||'';$('ma').value=r.lua||'';
+  const r=adminRows[i];
+  if(!r)return;
+  $('mb').value=r.input||'';
+  $('ma').value=r.output||'';
   showOverlay('dm');
 }
 function closeDetail(){SFX.close();hideOverlay('dm');}
-function eA(){
-  SFX.close();
-  if(unsub){unsub();unsub=null;}
-  adminRows=[];
-  const F=window.FB;if(F)F.signOut(F.auth).catch(()=>{});
-  $('ap').classList.remove('on');
-  $('mUI').style.display='';$('gab').style.display='';
-  showToast('🔙 กลับสู่หน้าหลัก');
-}
-
-/* ---------- Extractor ---------- */
-let finalCode='',fT=null;
-
-function cleanJunkCode(code){
-  return code.replace(/if\s+false\s+then.*?end/gs,'').replace(/^--.*$/gm,'').replace(/^\s*[\r\n]/gm,'').trim();
-}
-function setStatus(text,busy){
-  $('status').textContent=text;
-  $('sp').className=busy?'sp f':'sp';
-}
-function record(status,url,lua){
-  const F=window.FB;if(!F)return;
-  const time=new Date().toLocaleString('th-TH');
-  F.push(F.ref(F.db,'extractions'),{time,device:gd(),url,lua,status});
-  F.runTransaction(F.ref(F.db,'stats/'+status),v=>(v||0)+1);
-  F.set(F.ref(F.db,'stats/last'),time);
-}
-
-function fetchScript(){
-  clearTimeout(fT);
-  fT=setTimeout(async()=>{
-    const raw=$('inputUrl').value.trim();
-    if(!raw){setStatus('สถานะ: รอการวางลิงก์',false);return;}
-    const url=raw.match(/https?:\/\/[^\s"'`()<>]+/i)?.[0]||'';
-    setStatus('สถานะ: กำลังประมวลผล...',true);
-    try{
-      let code=raw;
-      if(url){
-        const res=await fetch(`https://nine.natwarach9.workers.dev/?url=${encodeURIComponent(url)}`);
-        if(!res.ok)throw new Error('Worker ตอบกลับว่าเกิดข้อผิดพลาด');
-        code=await res.text();
-      }
-      finalCode=cleanJunkCode(code);
-      $('outputLua').value=finalCode;
-      $('lineCount').textContent=finalCode.split('\n').length+' LINES';
-      setStatus('สถานะ: สำเร็จ!',false);
-      SFX.ding();
-      showToast('✅ ประมวลผลสำเร็จเรียบร้อย');
-      record('success',url||'Direct Paste',finalCode);
-    }catch(err){
-      finalCode='';
-      setStatus('สถานะ: ล้มเหลว ('+err.message+')',false);
-      $('outputLua').value='-- '+err.message;
-      SFX.error();
-      showToast('❌ เกิดข้อผิดพลาด');
-      record('failed',url||'Direct Paste',err.message);
-    }
-  },350);
-}
-
-async function pasteFromClipboard(){
-  try{
-    $('inputUrl').value=(await navigator.clipboard.readText()).trim();
-    fetchScript();
-  }catch(e){
-    SFX.error();showToast('⚠️ ไม่สามารถอ่านคลิปบอร์ดได้');
-  }
-}
-async function copyCode(){
-  if(!finalCode){SFX.error();showToast('⚠️ ยังไม่มีโค้ดให้คัดลอก');return;}
-  try{
-    await navigator.clipboard.writeText(finalCode);
-    SFX.ding();showToast('📋 คัดลอกโค้ดแล้ว!');
-  }catch(e){
-    SFX.error();showToast('❌ คัดลอกไม่สำเร็จ');
-  }
-}
-function downloadCode(){
-  if(!finalCode){SFX.error();showToast('⚠️ ไม่มีข้อความให้ดาวน์โหลด');return;}
-  const u=URL.createObjectURL(new Blob([finalCode],{type:'text/plain'}));
-  const a=document.createElement('a');
-  a.href=u;a.download='N99_Extracted_Script.txt';a.click();
-  setTimeout(()=>URL.revokeObjectURL(u),1000);
-  SFX.ding();showToast('💾 ดาวน์โหลดไฟล์แล้ว!');
-}
-function clearAll(){
-  clearTimeout(fT);
-  $('inputUrl').value='';$('outputLua').value='';finalCode='';
-  setStatus('สถานะ: รอการวางลิงก์',false);
-  $('lineCount').textContent='0 LINES';
-  SFX.clear();showToast('🧹 ล้างข้อมูลเรียบร้อย');
-}
 </script>
 </body>
 </html>
