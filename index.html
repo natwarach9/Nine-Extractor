@@ -405,6 +405,7 @@ document.addEventListener('keydown',e=>{
   if(!started&&(e.key==='Enter'||e.key===' ')){e.preventDefault();startApp();}
   if(e.key==='Escape'){hideOverlay('dm');hideOverlay('modal-admin');}
 },true);
+// กันเว็บอื่นฝังหน้านี้ใน iframe
 if(top!==self){document.documentElement.style.display='none';try{top.location=self.location}catch(_){}}
 
 const $=id=>document.getElementById(id);
@@ -413,7 +414,7 @@ const gd=()=>/Android/i.test(navigator.userAgent)?'Android':/iPhone|iPad/i.test(
 const LOGIN_HASH='MTIxMg==';
 const ADMIN_EMAIL='YOUR_ADMIN_EMAIL@example.com';
 
-/* ---------- เสียงทุบบล็อกแบบ Minecraft ---------- */
+/* ---------- เสียงทุบบล็อกแบบ Minecraft (สร้างในเบราว์เซอร์ ไม่ต้องโหลดไฟล์) ---------- */
 let AC=null,MASTER=null,NB=null;
 const ctx=()=>{
   if(!AC){
@@ -468,7 +469,7 @@ function unlockAudio(){
   try{ctx();}catch(_){}
 }
 
-/* ---------- เอฟเฟกต์กดปุ่ม: เสียง + อนุภาคพิกเซล (ยกเว้นตอนพิมพ์ใน textarea/input) ---------- */
+/* ---------- เอฟเฟกต์กดปุ่ม: เสียง + อนุภาคพิกเซลกระเด็น (ยกเว้นตอนพิมพ์ใน textarea/input) ---------- */
 function burst(x,y,col){
   for(let i=0;i<12;i++){
     const p=document.createElement('i');
@@ -517,7 +518,7 @@ function startApp(){
 }
 $('splash').addEventListener('click',startApp);
 
-/* ---------- Login ---------- */
+/* ---------- Login (ด่านหน้า) ---------- */
 function verifyLogin(){
   if(btoa($('login-pin').value.trim())===LOGIN_HASH){
     SFX.ding();hideOverlay('modal-login');showToast('✨ เข้าสู่ระบบสำเร็จ!');
@@ -527,7 +528,7 @@ function verifyLogin(){
 }
 $('login-pin').addEventListener('keydown',e=>{if(e.key==='Enter')verifyLogin();});
 
-/* ---------- สถิติ ---------- */
+/* ---------- สถิติ (อ่านจากตัวนับ ไม่ดึงประวัติทั้งหมด) ---------- */
 function renderStats(s){
   const put=(id,v)=>{
     const el=$(id);
@@ -543,7 +544,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(F)F.onValue(F.ref(F.db,'stats'),snap=>renderStats(snap.val()));
 });
 
-/* ---------- เชื่อมต่อ Backend บน Render พร้อมระบบแจ้งเตือนตื่นนอน ---------- */
+/* ---------- เชื่อมต่อ Backend บน Render (พร้อมระบบแจ้งเตือนเซิร์ฟเวอร์ตื่นนอน) ---------- */
 const RENDER_API_URL = 'https://nine-extractor-backend.onrender.com/deobfuscate';
 let fetchTimer = null;
 let serverWakeTimer = null;
@@ -654,7 +655,7 @@ function clearAll() {
   showToast('🧹 ล้างข้อมูลเรียบร้อย');
 }
 
-/* ---------- Admin ---------- */
+/* ---------- Admin (ใช้ Firebase Auth) ---------- */
 let adminRows=[],unsub=null;
 function openAdmin(){SFX.open();$('admin-pin').value='';showOverlay('modal-admin');setTimeout(()=>$('admin-pin').focus(),60);}
 function closeAdminUnlock(){SFX.close();hideOverlay('modal-admin');}
