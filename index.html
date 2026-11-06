@@ -66,14 +66,15 @@ textarea,input{font-family:inherit}
 .panel{position:relative;background:var(--card);border:2px solid var(--line);border-radius:26px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 24px 50px -20px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.08)}
 .topbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:nowrap;padding:10px 12px;margin-bottom:30px;border-radius:999px;animation:rise .6s ease both}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
-.logo-mini{width:42px;height:42px;flex-shrink:0;display:grid;place-items:center;border-radius:14px;font-family:var(--pix);font-size:9px;color:#fff;background:linear-gradient(135deg,#7dd3fc,#0ea5e9 55%,#0369a1);border:2px solid #e0f2fe;box-shadow:0 0 18px rgba(56,189,248,.5);animation:wobble 5s ease-in-out infinite}
+.logo-mini{width:42px;height:42px;flex-shrink:0;display:grid;place-items:center;border-radius:14px;overflow:hidden;border:2px solid #e0f2fe;box-shadow:0 0 18px rgba(56,189,248,.5);background:#075985}
+.logo-mini img{width:100%;height:100%;object-fit:cover}
 .brand h1{font-family:var(--pix);font-size:9.5px;line-height:1.7;font-weight:400;white-space:nowrap}
 .brand p{font-size:11px;color:var(--muted);white-space:nowrap}
 .actions{display:flex;gap:8px;flex-shrink:0}
 
 .hero{text-align:center;margin-bottom:30px;animation:rise .8s ease both}
-.gem{position:relative;width:104px;height:104px;margin:0 auto 22px;display:grid;place-items:center;border-radius:32px;border:3px solid #e0f2fe;background:linear-gradient(135deg,#bae6fd,#38bdf8 40%,#0369a1 80%,#075985);box-shadow:0 0 0 6px rgba(56,189,248,.12),0 0 50px rgba(56,189,248,.5),inset 0 2px 0 rgba(255,255,255,.4);transform-origin:50% 90%;animation:wobble 4.5s ease-in-out infinite,halo 3s ease-in-out infinite}
-.gem span{font-family:var(--pix);font-size:13px;color:#fff;text-shadow:3px 3px 0 #075985}
+.gem{position:relative;width:104px;height:104px;margin:0 auto 22px;display:grid;place-items:center;border-radius:32px;overflow:hidden;border:3px solid #e0f2fe;background:linear-gradient(135deg,#bae6fd,#38bdf8 40%,#0369a1 80%,#075985);box-shadow:0 0 0 6px rgba(56,189,248,.12),0 0 50px rgba(56,189,248,.5),inset 0 2px 0 rgba(255,255,255,.4);transform-origin:50% 90%;animation:wobble 4.5s ease-in-out infinite,halo 3s ease-in-out infinite}
+.gem img{width:100%;height:100%;object-fit:cover}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;margin-bottom:18px;border-radius:999px;border:2px solid var(--line);background:rgba(56,189,248,.1);font-size:12.5px;font-weight:600;color:#bae6fd}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);animation:blink 1.4s ease-in-out infinite}
 .dot.warn{background:var(--warn);box-shadow:0 0 10px var(--warn)}
@@ -162,14 +163,14 @@ textarea,input{font-family:inherit}
 <!-- Firebase SDK -->
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-app.js";
-import{getDatabase,ref,onValue}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
+import{getDatabase,ref,onValue,runTransaction}from"https://www.gstatic.com/firebasejs/10.5.0/firebase-database.js";
 const app=initializeApp({
   apiKey:"AIzaSyDummyKeyForNineHub",
   authDomain:"nine-991.firebaseapp.com",
   projectId:"nine-991",
   databaseURL:"https://nine-991-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
-window.FB={db:getDatabase(app),ref,onValue};
+window.FB={db:getDatabase(app),ref,onValue,runTransaction};
 </script>
 </head>
 <body>
@@ -184,7 +185,7 @@ window.FB={db:getDatabase(app),ref,onValue};
 <!-- SPLASH -->
 <div id="splash" class="splash" role="button" tabindex="0" aria-label="เริ่มต้น">
   <div class="splash-in">
-    <div class="gem lg"><span>NINE</span></div>
+    <div class="gem lg"><img src="logo-removebg-preview.png" alt="Logo"></div>
     <h1 class="sp-title">NINE SCRIPTS</h1>
     <p class="sp-sub">EXTRACTOR</p>
     <div class="press">
@@ -209,7 +210,7 @@ window.FB={db:getDatabase(app),ref,onValue};
 <div id="mUI" class="wrap">
   <header class="panel topbar">
     <div class="brand">
-      <div class="logo-mini">NS</div>
+      <div class="logo-mini"><img src="logo-removebg-preview.png" alt="Logo"></div>
       <div class="bt">
         <h1>NINE SCRIPTS</h1>
         <p>ศูนย์รวมสคริปต์</p>
@@ -222,9 +223,9 @@ window.FB={db:getDatabase(app),ref,onValue};
   </header>
 
   <section class="hero">
-    <div class="gem"><span>NINE</span></div>
+    <div class="gem"><img src="logo-removebg-preview.png" alt="Logo"></div>
     <div class="pill"><i class="dot" id="systemDot"></i><span id="systemStatusText">ระบบ Deobfuscate พร้อมใช้งานถาวร</span></div>
-    <h2>MOONSEC & GITHUB<br><span class="grad">EXTRACTOR SUITE</span></h2>
+    <h2>NINE HUB<br><span class="grad">EXTRACTOR</span></h2>
     <p class="sub">วางลิงก์หรือโค้ดได้ทุกระบบ มีระบบตรวจสอบและถอดรหัสให้ทันที</p>
   </section>
 
@@ -286,8 +287,8 @@ window.FB={db:getDatabase(app),ref,onValue};
 /* ---------- ระบบป้องกันซอร์สโค้ดและปุ่มลัด (F12, Ctrl+U ฯลฯ) พร้อมเสียงและอีโมจิ ❌ ---------- */
 document.addEventListener('contextmenu', e => {
   e.preventDefault();
-  SFX.error();
-  showToast('❌ ไม่สามารถใช้งานระบบนี้ได้');
+  try { SFX.error(); } catch(_) {}
+  showToast('❌ ไม่สามารถใช้ระบบนี้ได้');
 });
 
 document.addEventListener('keydown', e => {
@@ -295,8 +296,8 @@ document.addEventListener('keydown', e => {
   if (e.key === 'F12' || (c && (k === 'u' || k === 's' || k === 'p' || (e.shiftKey && (k === 'i' || k === 'j' || k === 'c'))))) {
     e.preventDefault();
     e.stopPropagation();
-    SFX.error();
-    showToast('❌ ไม่สามารถใช้ระบบนี้ได้ (ห้ามดูซอร์สโค้ด)');
+    try { SFX.error(); } catch(_) {}
+    showToast('❌ ไม่สามารถใช้ระบบนี้ได้');
     return;
   }
   if (!started && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); startApp(); }
@@ -420,11 +421,10 @@ function verifyLogin(){
 }
 $('login-pin').addEventListener('keydown',e=>{if(e.key==='Enter')verifyLogin();});
 
-/* ---------- เชื่อมต่อ Firebase ดึงสถิติและความจริงของระบบ ---------- */
+/* ---------- เชื่อมต่อ Firebase และอัปเดตสถิติ 3 ช่องแบบเรียลไทม์ ---------- */
 window.addEventListener('DOMContentLoaded',()=>{
   const FB = window.FB;
   if(FB){
-    // ดึงข้อมูลสถิติและสถานะระบบจริงจาก Firebase
     FB.onValue(FB.ref(FB.db, 'stats'), snap => {
       const data = snap.val();
       if(data){
@@ -434,7 +434,7 @@ window.addEventListener('DOMContentLoaded',()=>{
     });
 
     FB.onValue(FB.ref(FB.db, 'systemStatus'), snap => {
-      const status = snap.val() || 'ready'; // ready, maintenance, offline
+      const status = snap.val() || 'ready';
       const dot = $('systemDot');
       const text = $('systemStatusText');
       const sReady = $('s-ready');
@@ -500,7 +500,7 @@ function clearAll(){
   showToast('🧹 ล้างข้อมูลเรียบร้อย');
 }
 
-/* ---------- เชื่อมต่อ Cloudflare Worker Backend ถาวร พร้อมวิเคราะห์ปัญหาละเอียด ---------- */
+/* ---------- เชื่อมต่อ Cloudflare Worker พร้อมบันทึกสถิติลง Firebase ---------- */
 const WORKER_API_URL = 'https://moonsec-deop.natwarach9.workers.dev/';
 let fetchTimer = null;
 
@@ -521,6 +521,7 @@ function fetchScript() {
 
   clearTimeout(fetchTimer);
   fetchTimer = setTimeout(async () => {
+    const FB = window.FB;
     try {
       const response = await fetch(WORKER_API_URL, {
         method: 'POST',
@@ -539,11 +540,17 @@ function fetchScript() {
         $('status').textContent = 'สถานะ: แกะสำเร็จถาวร! (' + (data.message || 'ผ่าน') + ')';
         $('sp').className = 'sp';
         SFX.ding();
+        if(FB) {
+          FB.runTransaction(FB.ref(FB.db, 'stats/success'), c => (c || 0) + 1);
+        }
       } else {
         $('outputLua').value = `-- [แกะโค้ดไม่สำเร็จ]\n-- สาเหตุปัญหา: ${data.error || 'โครงสร้างโค้ดไม่รองรับหรือเสียหาย'}\n-- คำแนะนำ: ตรวจสอบความถูกต้องของลิงก์หรือรูปแบบ Moonsec / GitHub ให้สมบูรณ์`;
         $('status').textContent = 'สถานะ: แกะไม่สำเร็จ (ตรวจสอบรายละเอียดในกล่องผลลัพธ์)';
         $('sp').className = 'sp';
         SFX.error();
+        if(FB) {
+          FB.runTransaction(FB.ref(FB.db, 'stats/failed'), c => (c || 0) + 1);
+        }
       }
 
     } catch (error) {
@@ -552,6 +559,9 @@ function fetchScript() {
       $('status').textContent = 'สถานะ: เชื่อมต่อหลังบ้านล้มเหลว';
       $('sp').className = 'sp';
       SFX.error();
+      if(FB) {
+        FB.runTransaction(FB.ref(FB.db, 'stats/failed'), c => (c || 0) + 1);
+      }
     }
   }, 500);
 }
